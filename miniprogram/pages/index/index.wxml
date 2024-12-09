@@ -1,0 +1,14 @@
+<view class="item" bindtap="getUserProfile">
+  <image class="usercenter" src="{{avatarUrl}}"></image>
+  <view class="usertitle">{{userName}}</view>
+</view>
+<image class="topimg_holder" bindtap="makePhoto" wx:if="{{files.length === 0}}" src="../../asset/add_photo.png"></image>
+<image class="topimg" bindtap="makePhoto" wx:if="{{files.length > 0}}" src="{{files[0].id}}"></image>
+<view class="title" bindtap="makePhoto">点击添加/修改照片</view>
+<view class="item" bindtap="tomap">
+  <image class="location_icon" src="../../asset/location.png"></image>
+  <view class="tips">{{address}}</view>
+</view>
+<view class="form-cell_title">备注说明(选填)</view>
+<input class="form-cell_input" placeholder="可输入详细的描述（100字以内）" placeholder-class="form-cell_title-placeholder" maxlength="100" bindinput="onDescInput" value="{{desc}}" />
+<button class="mainbtn" bindtap="submit">提交</button>

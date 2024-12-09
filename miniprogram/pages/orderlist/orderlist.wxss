@@ -1,0 +1,88 @@
+/* pages/orderlist.wxss */
+page {
+  width: calc(100% - 30rpx);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 16rpx 16rpx;
+}
+
+.item {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+}
+
+.column_item {
+  display: flex;
+  flex-direction: column;
+  margin: 16rpx 0rpx;
+}
+
+.img {
+  width: 140rpx;
+  height: 140rpx;
+  flex-shrink: 0;
+}
+
+.icon_big {
+  margin-top: 30rpx;
+  width: 80rpx;
+  height: 80rpx;
+}
+
+.icon_normal {
+  margin-left: 60rpx;
+  margin-top: 10rpx;
+  width: 60rpx;
+  height: 60rpx;
+}
+
+.title {
+  margin-left: 10rpx;
+  font-family: PingFang-SC-Medium;
+  font-size: 34rpx;
+  color: var(--lb-color);
+  text-align: left;
+  font-weight: 400;
+  /* 定义为自适应布局   */
+  display: -webkit-box;
+  /* 超出部分隐藏 */
+  overflow: hidden;
+  /* 竖直方向的超出隐藏 */
+  -webkit-box-orient: vertical;
+  /* 限制最多2行 */
+  -webkit-line-clamp: 2;
+}
+
+.username {
+  margin-left: 10rpx;
+  font-family: PingFang-SC-Medium;
+  font-size: 34rpx;
+  color: var(--mb-color);
+  text-align: left;
+  font-weight: 500;
+  /*固定宽度*/
+  width: 100rpx;
+  /*超出部分隐藏*/
+  overflow: hidden;
+  /*不换行*/
+  white-space: nowrap;
+  /*添加...*/
+  text-overflow: ellipsis;
+}
+
+.time {
+  margin-right: 10rpx;
+  margin-left: auto;
+  font-family: PingFang-SC-Medium;
+  font-size: 30rpx;
+  color: var(--lb-color);
+  text-align: right;
+  font-weight: 400;
+}

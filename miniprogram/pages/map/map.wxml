@@ -1,0 +1,10 @@
+<map longitude="{{longitude}}" enable-3D="true" enable-building="true" latitude="{{latitude}}" bindregionchange="changeMap" bindtap="clickMap" show-location="true" markers="{{[marker]}}"></map>
+<view class="fixed_model">
+  <view class="in">点击地图定位位置</view>
+</view>
+<view class="info_model">
+	<view class="info_item">
+		<view>地址</view>
+		<view>{{info.formatted}}</view>
+	</view>
+</view>
