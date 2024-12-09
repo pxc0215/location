@@ -1,7 +1,7 @@
 {
   "pages": [
-    "pages/orderlist/orderlist",
     "pages/index/index",
+    "pages/orderlist/orderlist",
     "pages/map/map"
   ],
   "permission": {

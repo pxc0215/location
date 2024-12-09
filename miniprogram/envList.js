@@ -1,5 +1,5 @@
-const envList = [{"envId":"traffic-cloud-9gi2vjck785ae27a","alias":"traffic-cloud"}]
-const isMac = false
+const envList = [{"envId":"traffic-cloud-7gj3e87vf28bf653","alias":"traffic-cloud"}]
+const isMac = true
 const dev = "test"
 module.exports = {
     envList,
