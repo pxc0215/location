@@ -9,7 +9,7 @@ Page({
     address: '位置',
     desc: '',
     openId: '',
-    userName: '登录',
+    userName: '',
     avatarUrl: '../../asset/user_center.png'
   },
   /**
@@ -35,11 +35,11 @@ Page({
   },
 
   tryToLogin() {
-    var storageUserName = wx.getStorageSync('user_name')
-    var storageAvatarUrl = wx.getStorageSync('avatar_url')
+    const storageUserName = wx.getStorageSync('user_name')
+    const storageAvatarUrl = wx.getStorageSync('avatar_url')
     that.setData({
-      userName: storageUserName ? storageUserName : '登录',
-      avatarUrl: storageAvatarUrl ? storageAvatarUrl : '../../asset/logo.png'
+      userName: storageUserName || '',
+      avatarUrl: storageAvatarUrl || '../../asset/user_center.png'
     })
   },
 
@@ -135,21 +135,35 @@ Page({
     })
   },
   async getUserProfile() {
-    var username = wx.getStorageSync('user_name')
+    const username = wx.getStorageSync('user_name')
     if (username) {
-      // goto 个人中心or订单列表
+      // 已登录，跳转到订单列表
       wx.navigateTo({
         url: '../orderlist/orderlist'
       })
     } else {
+      // 未登录，显示登录弹窗
       wx.getUserProfile({
-        desc: '用于完善资料', // 声明获取用户个人信息后的用途，后续会展示在弹窗中，请谨慎填写
+        desc: '用于完善资料',
         success: (res) => {
           wx.setStorageSync('user_name', res.userInfo.nickName)
           wx.setStorageSync('avatar_url', res.userInfo.avatarUrl)
           that.setData({
             userName: res.userInfo.nickName,
             avatarUrl: res.userInfo.avatarUrl
+          })
+          wx.showToast({
+            title: '登录成功',
+            icon: 'success',
+            duration: 2000
+          })
+        },
+        fail: (err) => {
+          console.error('登录失败', err)
+          wx.showToast({
+            title: '登录失败',
+            icon: 'error',
+            duration: 2000
           })
         }
       })

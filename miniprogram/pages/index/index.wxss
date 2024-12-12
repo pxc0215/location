@@ -82,3 +82,7 @@ page {
 .mainbtn:active {
   background: var(--zb-color);
 }
+
+.avatar-gray {
+  filter: grayscale(100%);  /* 未登录时显示灰色 */
+}

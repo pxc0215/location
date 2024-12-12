@@ -1,6 +1,6 @@
 <view class="item" bindtap="getUserProfile">
-  <image class="usercenter" src="{{avatarUrl}}"></image>
-  <view class="usertitle">{{userName}}</view>
+  <image class="usercenter {{!userName || userName === '登录' ? 'avatar-gray' : ''}}" src="{{avatarUrl}}"></image>
+  <view class="usertitle">{{userName || '请登录'}}</view>
 </view>
 <image class="topimg_holder" bindtap="makePhoto" wx:if="{{files.length === 0}}" src="../../asset/add_photo.png"></image>
 <image class="topimg" bindtap="makePhoto" wx:if="{{files.length > 0}}" src="{{files[0].id}}"></image>
