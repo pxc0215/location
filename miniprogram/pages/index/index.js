@@ -137,37 +137,34 @@ Page({
   async getUserProfile() {
     const username = wx.getStorageSync('user_name')
     if (username) {
-      // 已登录，跳转到订单列表
-      wx.navigateTo({
-        url: '../orderlist/orderlist'
-      })
-    } else {
-      // 未登录，显示登录弹窗
-      wx.getUserProfile({
-        desc: '用于完善资料',
-        success: (res) => {
-          wx.setStorageSync('user_name', res.userInfo.nickName)
-          wx.setStorageSync('avatar_url', res.userInfo.avatarUrl)
-          that.setData({
-            userName: res.userInfo.nickName,
-            avatarUrl: res.userInfo.avatarUrl
-          })
-          wx.showToast({
-            title: '登录成功',
-            icon: 'success',
-            duration: 2000
-          })
-        },
-        fail: (err) => {
-          console.error('登录失败', err)
-          wx.showToast({
-            title: '登录失败',
-            icon: 'error',
-            duration: 2000
-          })
-        }
-      })
+      return
     }
+    // 未登录，显示登录弹窗
+    wx.getUserProfile({
+      desc: '用于完善资料',
+      success: (res) => {
+        wx.setStorageSync('user_name', res.userInfo.nickName)
+        wx.setStorageSync('avatar_url', res.userInfo.avatarUrl)
+        that.setData({
+          userName: res.userInfo.nickName,
+          avatarUrl: res.userInfo.avatarUrl
+        })
+        wx.showToast({
+          title: '登录成功',
+          icon: 'success',
+          duration: 2000
+        })
+      },
+      fail: (err) => {
+        console.error('登录失败', err)
+        wx.showToast({
+          title: '登录失败',
+          icon: 'error',
+          duration: 2000
+        })
+      }
+    })
+
   },
 
   // 提交
@@ -210,5 +207,38 @@ Page({
       title: '快来随手拍交通事故',
       imageUrl: '../../asset/logo.png'
     }
+  },
+  // 跳转到历史记录页面
+  toOrderList() {
+    wx.navigateTo({
+      url: '../orderlist/orderlist'
+    })
+  },
+
+  // 处理退出登录
+  handleLogout() {
+    wx.showModal({
+      title: '提示',
+      content: '确定要退出登录吗？',
+      success: (res) => {
+        if (res.confirm) {
+          // 清除存储的用户信息
+          wx.removeStorageSync('user_name')
+          wx.removeStorageSync('avatar_url')
+
+          // 重置页面状态
+          this.setData({
+            userName: '',
+            avatarUrl: '../../asset/user_center.png'
+          })
+
+          wx.showToast({
+            title: '已退出登录',
+            icon: 'success',
+            duration: 2000
+          })
+        }
+      }
+    })
   }
 })
