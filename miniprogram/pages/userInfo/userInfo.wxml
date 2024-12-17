@@ -1,0 +1,13 @@
+<view class="container">
+  <view class="info-item">
+    <text class="label">头像</text>
+    <image class="avatar" src="{{userInfo.avatarUrl}}"></image>
+  </view>
+  <view class="info-item">
+    <text class="label">昵称</text>
+    <input class="nickname-input" 
+           value="{{userInfo.nickName}}"
+           bindblur="updateNickname"
+           placeholder="请输入昵称"/>
+  </view>
+</view> 

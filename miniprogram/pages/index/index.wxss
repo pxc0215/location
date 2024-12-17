@@ -10,11 +10,44 @@ page {
   margin-top: 10rpx;
   width: 60rpx;
   height: 60rpx;
+  border-radius: 50%;
+  flex-shrink: 0;
 }
 
 .usertitle {
-  margin-top: 10rpx;
-  margin-left: 10rpx;
+  position: relative;
+  margin-left: 20rpx;
+  font-size: 28rpx;
+  line-height: 60rpx;
+}
+
+.user-section .item:not(.no-login) .usertitle {
+  padding-right: 40rpx;
+}
+
+.user-section .item:not(.no-login) .usertitle::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 50%;
+  width: 12rpx;
+  height: 12rpx;
+  border-right: 2rpx solid #999;
+  border-bottom: 2rpx solid #999;
+  transform: translateY(-50%) rotate(45deg);
+  transition: transform 0.2s;
+}
+
+.user-section .item.active:not(.no-login) .usertitle::after {
+  transform: translateY(-50%) rotate(-135deg);
+}
+
+.user-section .item.no-login .usertitle {
+  padding-right: 0;
+}
+
+.user-section .item.no-login .usertitle::after {
+  display: none;
 }
 
 .topimg {
@@ -108,4 +141,54 @@ page {
 
 .logout {
   color: #f56c6c;
+}
+
+.user-section {
+  position: relative;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: #fff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8rpx;
+  z-index: 100;
+  min-width: 200rpx;
+  margin-top: 10rpx;
+}
+
+.menu-item {
+  padding: 20rpx 30rpx;
+  font-size: 28rpx;
+  color: #333;
+  border-bottom: 1rpx solid #eee;
+}
+
+.menu-item:last-child {
+  border-bottom: none;
+  color: #f56c6c;
+}
+
+.menu-item:active {
+  background: #f5f5f5;
+}
+
+.mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: transparent;
+  z-index: 99;
+}
+
+.user-section .item {
+  display: flex;
+  align-items: center;
+  padding: 10rpx;
+  border-radius: 8rpx;
+  transition: background-color 0.2s;
 }

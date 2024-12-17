@@ -1,0 +1,28 @@
+.container {
+  padding: 30rpx;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  padding: 30rpx 0;
+  border-bottom: 1rpx solid #eee;
+}
+
+.label {
+  width: 140rpx;
+  font-size: 30rpx;
+  color: #333;
+}
+
+.avatar {
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 50%;
+}
+
+.nickname-input {
+  flex: 1;
+  font-size: 30rpx;
+  padding: 10rpx;
+} 

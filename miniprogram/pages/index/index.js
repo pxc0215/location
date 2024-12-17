@@ -10,7 +10,8 @@ Page({
     desc: '',
     openId: '',
     userName: '',
-    avatarUrl: '../../asset/user_center.png'
+    avatarUrl: '../../asset/user_center.png',
+    showMenu: false
   },
   /**
    * 页面装载回调
@@ -99,7 +100,7 @@ Page({
         var dev = require('../../envList.js').dev
         // 将图片上传至云存储空间
         wx.cloud.uploadFile({
-          // 指定上传到的云路径
+          // 指定传到的云路径
           cloudPath: 'traffic_' + dev + '/' + name + '.png',
           // 指定要上传的文件的小程序临时文件路径
           filePath: file.tempFilePath,
@@ -217,28 +218,67 @@ Page({
 
   // 处理退出登录
   handleLogout() {
+    this.setData({
+      showMenu: false
+    });
     wx.showModal({
       title: '提示',
       content: '确定要退出登录吗？',
       success: (res) => {
         if (res.confirm) {
-          // 清除存储的用户信息
-          wx.removeStorageSync('user_name')
-          wx.removeStorageSync('avatar_url')
-
-          // 重置页面状态
+          wx.removeStorageSync('user_name');
+          wx.removeStorageSync('avatar_url');
+          
           this.setData({
             userName: '',
             avatarUrl: '../../asset/user_center.png'
-          })
+          });
 
           wx.showToast({
             title: '已退出登录',
             icon: 'success',
             duration: 2000
-          })
+          });
         }
       }
-    })
+    });
+  },
+
+  // 显示用户菜单
+  showUserMenu() {
+    if (!this.data.userName || this.data.userName === '登录') {
+      // 未登录时，触发登录
+      this.getUserProfile();
+      return;
+    }
+    this.setData({
+      showMenu: !this.data.showMenu
+    });
+  },
+
+  // 跳转到个人信息页面
+  toUserInfo() {
+    this.setData({
+      showMenu: false
+    });
+    wx.navigateTo({
+      url: '../userInfo/userInfo'
+    });
+  },
+
+  // 点击页面其他区域关闭菜单
+  onTapPage() {
+    if (this.data.showMenu) {
+      this.setData({
+        showMenu: false
+      });
+    }
+  },
+
+  // 隐藏菜单
+  hideMenu() {
+    this.setData({
+      showMenu: false
+    });
   }
 })

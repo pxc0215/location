@@ -1,13 +1,26 @@
+<view class="mask" wx:if="{{showMenu}}" bindtap="hideMenu"></view>
+
 <view class="header">
-  <view class="item" bindtap="getUserProfile">
-    <image class="usercenter {{!userName || userName === '登录' ? 'avatar-gray' : ''}}" src="{{avatarUrl}}"></image>
-    <view class="usertitle">{{userName || '请登录'}}</view>
+  <view class="user-section">
+    <view class="item {{showMenu ? 'active' : ''}} {{!userName || userName === '登录' ? 'no-login' : ''}}" bindtap="showUserMenu">
+      <image class="usercenter {{!userName || userName === '登录' ? 'avatar-gray' : ''}}" src="{{avatarUrl}}"></image>
+      <view class="usertitle">{{userName || '请登录'}}</view>
+    </view>
+    
+    <!-- 下拉菜单 -->
+    <view class="dropdown-menu" wx:if="{{showMenu && userName && userName !== '登录'}}">
+      <view class="menu-item" bindtap="toUserInfo">
+        <text>个人信息</text>
+      </view>
+      <view class="menu-item" bindtap="handleLogout">
+        <text>退出</text>
+      </view>
+    </view>
   </view>
-  
-  <!-- 添加右侧按钮组 -->
+
+  <!-- 右侧只保留历史记录按钮 -->
   <view class="right-buttons" wx:if="{{userName && userName !== '登录'}}">
     <view class="nav-btn" bindtap="toOrderList">历史记录</view>
-    <view class="nav-btn logout" bindtap="handleLogout">退出</view>
   </view>
 </view>
 <image class="topimg_holder" bindtap="makePhoto" wx:if="{{files.length === 0}}" src="../../asset/add_photo.png"></image>
