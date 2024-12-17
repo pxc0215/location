@@ -1,5 +1,5 @@
 <view class="container">
-  <view class="info-item">
+  <view class="info-item" bindtap="onTapAvatar">
     <text class="label">头像</text>
     <image class="avatar" src="{{userInfo.avatarUrl}}"></image>
   </view>
@@ -7,7 +7,12 @@
     <text class="label">昵称</text>
     <input class="nickname-input" 
            value="{{userInfo.nickName}}"
-           bindblur="updateNickname"
+           bindinput="onInputNickname"
            placeholder="请输入昵称"/>
   </view>
+</view>
+
+<!-- 添加导航栏按钮 -->
+<view class="nav-btn-container">
+  <button class="save-btn" bindtap="saveUserInfo">完成</button>
 </view> 

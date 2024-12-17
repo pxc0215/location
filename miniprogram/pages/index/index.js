@@ -143,7 +143,7 @@ Page({
     // 未登录，显示登录弹窗
     wx.getUserProfile({
       desc: '用于完善资料',
-      success: (res) => {
+      success: async (res) => {
         wx.setStorageSync('user_name', res.userInfo.nickName)
         wx.setStorageSync('avatar_url', res.userInfo.avatarUrl)
         that.setData({
@@ -155,6 +155,20 @@ Page({
           icon: 'success',
           duration: 2000
         })
+
+        // 获取存储的用户昵称
+        var env = require('../../envList.js').dev
+        const { data } = await db.collection(app.globalData.collection_user + '_' + env).where({
+          _openid: this.data.openId
+        }).get()
+
+        // 如果有存储的昵称，使用存储的昵称
+        if (data.length > 0 && data[0].nickName) {
+          wx.setStorageSync('user_name', data[0].nickName)
+          that.setData({
+            userName: data[0].nickName
+          })
+        }
       },
       fail: (err) => {
         console.error('登录失败', err)
@@ -205,7 +219,7 @@ Page({
   },
   onShareAppMessage() {
     return {
-      title: '快来随手拍交通事故',
+      title: '快来��手拍交通事故',
       imageUrl: '../../asset/logo.png'
     }
   },
@@ -273,12 +287,5 @@ Page({
         showMenu: false
       });
     }
-  },
-
-  // 隐藏菜单
-  hideMenu() {
-    this.setData({
-      showMenu: false
-    });
   }
 })

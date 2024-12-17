@@ -6,6 +6,7 @@ App({
       // 云端数据库集合(相当于表)名称
       collection_order: 'traffic_order',
       collection_order_transfer: 'traffic_order_transfer',
+      collection_user:'user_info',
       // 最大图片上传数量
       fileLimit: 3
     }

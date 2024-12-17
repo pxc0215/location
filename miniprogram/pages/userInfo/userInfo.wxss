@@ -25,4 +25,25 @@
   flex: 1;
   font-size: 30rpx;
   padding: 10rpx;
+}
+
+.nav-btn-container {
+  position: fixed;
+  top: 0;
+  right: 0;
+  padding: 8px 15px;
+}
+
+.save-btn {
+  color: #007AFF;
+  font-size: 32rpx;
+  background: none;
+  border: none;
+  padding: 0;
+  line-height: 1.4;
+  width: auto !important;
+}
+
+.save-btn::after {
+  border: none;
 } 
