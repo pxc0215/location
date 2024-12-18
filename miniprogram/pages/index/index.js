@@ -90,37 +90,45 @@ Page({
 
   async makePhoto() {
     wx.showLoading({
-      title: '',
-    });
+      title: '加载中'
+    })
     wx.chooseMedia({
       count: 1,
-      success: res => {
-        const file = res.tempFiles[0]
-        var name = Date.parse(new Date());
+      mediaType: ['image'],
+      sourceType: ['album', 'camera'],
+      success: (res) => {
+        console.log(res)
+        that.setData({
+          files: [{
+            id: res.tempFiles[0].tempFilePath
+          }]
+        })
         var dev = require('../../envList.js').dev
-        // 将图片上传至云存储空间
         wx.cloud.uploadFile({
-          // 指定传到的云路径
-          cloudPath: 'traffic_' + dev + '/' + name + '.png',
-          // 指定要上传的文件的小程序临时文件路径
-          filePath: file.tempFilePath,
-          success: result => {
-            console.log('上传成功', result);
-            this.data.files.push({
-              name: name + '.png',
-              size: (file.size / 1024 / 1024).toFixed(2),
-              id: result.fileID
+          cloudPath: 'traffic_' + dev + '/' + 'accident_' + new Date().getTime() + '.png',
+          filePath: res.tempFiles[0].tempFilePath,
+          success: res => {
+            console.log('[上传文件] 成功：', res)
+            that.setData({
+              files: [{
+                id: res.fileID
+              }]
             })
-            this.setData({
-              files: this.data.files
-            });
-            wx.hideLoading();
+            wx.hideLoading()
           },
           fail: e => {
-            console.log(e);
-            wx.hideLoading();
+            console.error('[上传文件] 失败：', e)
+            wx.hideLoading()
+            wx.showToast({
+              title: '上传失败',
+              icon: 'none'
+            })
           }
         })
+      },
+      fail: () => {
+        // 用户取消选择时，关闭 loading
+        wx.hideLoading()
       }
     })
   },
