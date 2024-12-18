@@ -1,88 +1,108 @@
 /* pages/orderlist.wxss */
 page {
-  width: calc(100% - 30rpx);
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  padding: 16rpx 16rpx;
+  background: #f5f5f5;
+  padding: 24rpx;
+  width: auto;
+  box-sizing: border-box;
 }
 
-.item {
-  display: flex;
-  flex-direction: row;
+.order-list {
   width: 100%;
+  padding-right: 24rpx;
 }
 
-.column {
+.order-item {
+  background: #ffffff;
+  border-radius: 16rpx;
+  margin-bottom: 24rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.04);
+  overflow: hidden;
+  margin-right: 24rpx;
+}
+
+.order-header {
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  padding: 24rpx 24rpx 24rpx 12rpx;
 }
 
-.column_item {
+.arrow-wrapper {
   display: flex;
-  flex-direction: column;
-  margin: 16rpx 0rpx;
+  align-items: center;
+  padding: 0 8rpx;
 }
 
-.img {
-  width: 140rpx;
-  height: 140rpx;
+.arrow-icon {
+  width: 40rpx;
+  height: 40rpx;
+  transition: transform 0.3s ease;
+}
+
+.arrow-down {
+  transform: rotate(90deg);
+}
+
+.order-image {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 12rpx;
+  margin-right: 24rpx;
   flex-shrink: 0;
+  background: #f0f0f0;
 }
 
-.icon_big {
-  margin-top: 30rpx;
-  width: 80rpx;
-  height: 80rpx;
+.order-info {
+  flex: 1;
+  min-width: 0;
 }
 
-.icon_normal {
-  margin-left: 60rpx;
-  margin-top: 10rpx;
-  width: 60rpx;
-  height: 60rpx;
-}
-
-.title {
-  margin-left: 10rpx;
-  font-family: PingFang-SC-Medium;
-  font-size: 34rpx;
-  color: var(--lb-color);
-  text-align: left;
-  font-weight: 400;
-  /* 定义为自适应布局   */
-  display: -webkit-box;
-  /* 超出部分隐藏 */
-  overflow: hidden;
-  /* 竖直方向的超出隐藏 */
-  -webkit-box-orient: vertical;
-  /* 限制最多2行 */
-  -webkit-line-clamp: 2;
-}
-
-.username {
-  margin-left: 10rpx;
-  font-family: PingFang-SC-Medium;
-  font-size: 34rpx;
-  color: var(--mb-color);
-  text-align: left;
+.address-text {
+  font-size: 32rpx;
+  color: #333333;
+  line-height: 1.4;
+  margin-bottom: 12rpx;
   font-weight: 500;
-  /*固定宽度*/
-  width: 100rpx;
-  /*超出部分隐藏*/
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
   overflow: hidden;
-  /*不换行*/
-  white-space: nowrap;
-  /*添加...*/
-  text-overflow: ellipsis;
 }
 
-.time {
-  margin-right: 10rpx;
-  margin-left: auto;
-  font-family: PingFang-SC-Medium;
-  font-size: 30rpx;
-  color: var(--lb-color);
-  text-align: right;
-  font-weight: 400;
+.bottom-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.user-name {
+  font-size: 28rpx;
+  color: #666666;
+  max-width: 200rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.order-time {
+  font-size: 26rpx;
+  color: #999999;
+}
+
+.order-detail {
+  padding: 24rpx 24rpx 24rpx 104rpx;
+  background: #f9f9f9;
+  border-top: 1rpx solid #eee;
+  opacity: 0;
+  height: 0;
+  transition: all 0.3s ease;
+}
+
+.order-detail.show {
+  opacity: 1;
+  height: auto;
+}
+
+.detail-icon {
+  width: 40rpx;
+  height: 40rpx;
 }

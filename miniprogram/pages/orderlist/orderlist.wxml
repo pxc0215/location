@@ -1,20 +1,22 @@
 <!--pages/orderlist.wxml-->
-<view class="column_item" wx:for="{{orders}}">
-  <view class="item">
-    <view data-id="{{index}}" bind:tap="foldItem">
-      <image wx:if="{{!unfold[index]}}" class="icon_big" src="../../asset/right_arrows.svg" />
-      <image wx:if="{{unfold[index]}}" class="icon_big" src="../../asset/down_arrows.svg" />
-    </view>
-    <image class="img" src="{{item.files[0].id}}" />
-    <view class="column">
-      <text class="title">{{item.address}}</text>
-      <view class="item">
-        <text class="username">{{item.ownername}}</text>
-        <text class="time">2024-03-15</text>
+<view class="order-list">
+  <view class="order-item" wx:for="{{orders}}" wx:key="index">
+    <view class="order-header" data-id="{{index}}" bind:tap="foldItem">
+      <view class="arrow-wrapper">
+        <image class="arrow-icon {{unfold[index] ? 'arrow-down' : ''}}" 
+               src="../../asset/{{unfold[index] ? 'down_arrows.svg' : 'right_arrows.svg'}}" />
+      </view>
+      <image class="order-image" mode="aspectFill" src="{{item.files[0].id}}" />
+      <view class="order-info">
+        <view class="address-text">{{item.address}}</view>
+        <view class="bottom-info">
+          <text class="user-name">{{item.ownername}}</text>
+          <text class="order-time">{{item.createTime}}</text>
+        </view>
       </view>
     </view>
-  </view>
-  <view wx:if="{{unfold[index]}}" class="column">
-    <image class="icon_normal" src="../../asset/dot.svg"></image>
+    <view class="order-detail {{unfold[index] ? 'show' : ''}}" wx:if="{{unfold[index]}}">
+      <image class="detail-icon" src="../../asset/dot.svg"></image>
+    </view>
   </view>
 </view>
