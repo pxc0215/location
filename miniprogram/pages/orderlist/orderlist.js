@@ -11,6 +11,15 @@ Page({
     unfold: []
   },
 
+  // 格式化日期的函数
+  formatDate(timestamp) {
+    if (!timestamp) return '';
+    const date = new Date(timestamp);
+    // 检查是否为有效日期
+    if (isNaN(date.getTime())) return '';
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+  },
+
   /**
    * 生命周期函数--监听页面加载
    */
@@ -80,20 +89,36 @@ Page({
       ownerid: this.data.openId
     }])).get({
       success: function (res) {
-        console.log("res = ", res.data)
-        // 处理每个订单的时间显示
+        console.log("原始数据: ", res.data)
+        // 处理每个订单的时间显示和状态记录
         const orders = res.data.map(order => {
-          // 如果存在 createTime 字段且为时间戳
-          if (order.createTime) {
-            const date = new Date(order.createTime);
-            order.createTime = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+          console.log("处理订单时间，原始数据：", order)
+          
+          // 格式化创建时间
+          order.createTime = that.formatDate(order.time);
+          console.log("格式化后的创建时间：", order.createTime)
+
+          // 处理流转记录
+          if (order.flowRecords && Array.isArray(order.flowRecords)) {
+            order.flowRecords = order.flowRecords.map(record => {
+              console.log("流转记录时间戳：", record.timestamp)
+              return {
+                ...record,
+                time: that.formatDate(record.timestamp)
+              }
+            })
           } else {
-            // 如果没有 createTime，使用数据库自带的 _createTime
-            const date = new Date(order._createTime || Date.now());
-            order.createTime = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+            order.flowRecords = []
           }
-          return order;
-        });
+
+          // 处理归档记录
+          if (order.archived) {
+            order.archiveTime = that.formatDate(order.archiveTimestamp)
+          }
+
+          console.log("处理后的订单数据：", order)
+          return order
+        })
 
         that.setData({
           orders: orders
@@ -117,5 +142,5 @@ Page({
     this.setData({
       unfold : this.data.unfold
     })
-  }
+  },
 })

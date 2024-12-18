@@ -36,6 +36,7 @@ page {
   width: 40rpx;
   height: 40rpx;
   transition: transform 0.3s ease;
+  transform: rotate(0deg);
 }
 
 .arrow-down {
@@ -105,4 +106,93 @@ page {
 .detail-icon {
   width: 40rpx;
   height: 40rpx;
+}
+
+.status-timeline {
+  padding: 20rpx 0;
+  position: relative;
+}
+
+.status-item {
+  display: flex;
+  align-items: center;
+  padding: 24rpx 24rpx 24rpx 24rpx;
+  position: relative;
+  margin-left: -80rpx;
+}
+
+.status-item::before {
+  content: '';
+  position: absolute;
+  left: 5rpx;
+  top: 0;
+  bottom: 0;
+  width: 2rpx;
+  background: #E8E8E8;
+  z-index: 1;
+}
+
+.status-item:first-child::before {
+  top: 50%;
+}
+
+.status-item:last-child::before {
+  bottom: 50%;
+}
+
+.status-icon {
+  width: 12rpx;
+  height: 12rpx;
+  margin-right: 24rpx;
+  position: relative;
+  z-index: 2;
+  background: #4A90E2;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.status-content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.status-type {
+  font-size: 28rpx;
+  color: #fff;
+  font-weight: 500;
+  background: #4A90E2;
+  padding: 4rpx 16rpx;
+  border-radius: 24rpx;
+  min-width: 80rpx;
+  text-align: center;
+}
+
+.status-user {
+  font-size: 28rpx;
+  color: #333;
+  font-weight: 500;
+  margin-left: 8rpx;
+}
+
+.status-time {
+  font-size: 26rpx;
+  color: #999;
+  margin-left: auto;
+}
+
+.status-item.create .status-type,
+.status-item.create .status-icon {
+  background: #4A90E2;
+}
+
+.status-item.flow .status-type,
+.status-item.flow .status-icon {
+  background: #67C23A;
+}
+
+.status-item.archive .status-type,
+.status-item.archive .status-icon {
+  background: #909399;
 }

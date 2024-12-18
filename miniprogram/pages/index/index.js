@@ -201,7 +201,7 @@ Page({
       })
       return
     }
-    var timestamp = new Date().time
+    var timestamp = Date.now()
     var env = require('../../envList.js').dev
     // 在数据库中新建一条记录
     db.collection(app.globalData.collection_order + '_' + env).add({

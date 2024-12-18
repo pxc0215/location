@@ -16,7 +16,37 @@
       </view>
     </view>
     <view class="order-detail {{unfold[index] ? 'show' : ''}}" wx:if="{{unfold[index]}}">
-      <image class="detail-icon" src="../../asset/dot.svg"></image>
+      <view class="status-timeline">
+        <!-- 创建状态 -->
+        <view class="status-item create">
+          <view class="status-icon"></view>
+          <view class="status-content">
+            <text class="status-type">创建</text>
+            <text class="status-user">{{item.ownername}}</text>
+            <text class="status-time">{{item.createTime}}</text>
+          </view>
+        </view>
+        
+        <!-- 流转状态 -->
+        <view class="status-item flow" wx:for="{{item.flowRecords}}" wx:key="timestamp" wx:for-item="record">
+          <view class="status-icon"></view>
+          <view class="status-content">
+            <text class="status-type">流转</text>
+            <text class="status-user">{{record.userName}}</text>
+            <text class="status-time">{{record.time}}</text>
+          </view>
+        </view>
+
+        <!-- 归档状态 -->
+        <view class="status-item archive" wx:if="{{item.archived}}">
+          <view class="status-icon"></view>
+          <view class="status-content">
+            <text class="status-type">归档</text>
+            <text class="status-user">{{item.archiveUser}}</text>
+            <text class="status-time">{{item.archiveTime}}</text>
+          </view>
+        </view>
+      </view>
     </view>
   </view>
 </view>
