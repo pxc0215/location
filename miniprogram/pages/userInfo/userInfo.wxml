@@ -10,6 +10,13 @@
            bindinput="onInputNickname"
            placeholder="请输入昵称"/>
   </view>
+  <view class="info-item">
+    <text class="label">企业</text>
+    <input class="nickname-input" 
+           value="{{userInfo.company}}"
+           bindinput="onInputCompany"
+           placeholder="请输入企业名称"/>
+  </view>
 </view>
 
 <!-- 添加导航栏按钮 -->

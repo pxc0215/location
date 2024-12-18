@@ -5,22 +5,25 @@ Page({
   data: {
     userInfo: {
       nickName: '',
-      avatarUrl: ''
+      avatarUrl: '',
+      company: ''
     },
     openId: '',
-    hasChanged: false  // 标记是否修改过昵称
+    hasChanged: false
   },
 
   onLoad() {
     // 获取存储的用户信息
     const nickName = wx.getStorageSync('user_name')
     const avatarUrl = wx.getStorageSync('avatar_url')
+    const company = wx.getStorageSync('company')
     const openId = wx.getStorageSync('open_id')
 
     this.setData({
       userInfo: {
         nickName,
-        avatarUrl
+        avatarUrl,
+        company
       },
       openId
     })
@@ -43,6 +46,15 @@ Page({
     })
   },
 
+  // 输入企业名称
+  onInputCompany(e) {
+    const newCompany = e.detail.value
+    this.setData({
+      'userInfo.company': newCompany,
+      hasChanged: true
+    })
+  },
+
   // 保存用户信息
   async saveUserInfo() {
     if (!this.data.hasChanged) {
@@ -50,7 +62,7 @@ Page({
       return
     }
 
-    const { nickName } = this.data.userInfo
+    const { nickName, company } = this.data.userInfo
     const openId = this.data.openId
 
     if (!nickName) {
@@ -66,7 +78,6 @@ Page({
     })
 
     try {
-      // 查询是否已存在用户记录
       var env = require('../../envList.js').dev
       const userCollection = db.collection(app.globalData.collection_user + '_' + env)
       const { data } = await userCollection.where({
@@ -77,7 +88,8 @@ Page({
         // 更新现有记录
         await userCollection.doc(data[0]._id).update({
           data: {
-            nickName
+            nickName,
+            company
           }
         })
       } else {
@@ -85,13 +97,24 @@ Page({
         await userCollection.add({
           data: {
             nickName,
-            avatarUrl: this.data.userInfo.avatarUrl
+            avatarUrl: this.data.userInfo.avatarUrl,
+            company
           }
         })
       }
 
       // 更新本地存储
       wx.setStorageSync('user_name', nickName)
+      wx.setStorageSync('company', company)
+
+      // 获取页面实例并更新数据
+      const pages = getCurrentPages()
+      const prevPage = pages[pages.length - 2]
+      if (prevPage) {
+        prevPage.setData({
+          userName: nickName
+        })
+      }
 
       wx.hideLoading()
       wx.showToast({
@@ -99,7 +122,6 @@ Page({
         icon: 'success'
       })
 
-      // 延迟返回上一页
       setTimeout(() => {
         wx.navigateBack()
       }, 1500)

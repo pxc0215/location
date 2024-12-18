@@ -54,12 +54,14 @@ page {
   margin: 60rpx auto 60rpx;
   width: 592rpx;
   height: 592rpx;
+  display: block;
 }
 
 .topimg_holder {
   margin: 120rpx auto 60rpx;
   width: 292rpx;
   height: 292rpx;
+  display: block;
 }
 
 .title {
