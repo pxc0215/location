@@ -144,50 +144,86 @@ Page({
     })
   },
   async getUserProfile() {
-    const username = wx.getStorageSync('user_name')
-    if (username) {
-      return
-    }
-    // 未登录，显示登录弹窗
+    // 显示加载中
+    wx.showLoading({
+      title: '微信账户登录中...',
+      mask: true  // 添加遮罩层防止重复点击
+    })
+
     wx.getUserProfile({
-      desc: '用于完善资料',
+      desc: '用于完善会员资料',
       success: async (res) => {
-        wx.setStorageSync('user_name', res.userInfo.nickName)
-        wx.setStorageSync('avatar_url', res.userInfo.avatarUrl)
+        console.log("获取用户信息成功", res)
+        const userInfo = res.userInfo
         that.setData({
-          userName: res.userInfo.nickName,
-          avatarUrl: res.userInfo.avatarUrl
+          avatarUrl: userInfo.avatarUrl
         })
-        wx.showToast({
-          title: '登录成功',
-          icon: 'success',
-          duration: 2000
+        wx.setStorageSync('avatar_url', userInfo.avatarUrl)
+
+        // 获取用户openId
+        wx.cloud.callFunction({
+          name: 'getOpenId',
+          success: function(res) {
+            console.log("云函数调用成功", res)
+            that.setData({
+              openId: res.result.openid
+            })
+            wx.setStorageSync('open_id', res.result.openid)
+
+            // 获取存储的用户昵称
+            const db = wx.cloud.database()
+            var env = require('../../envList.js').dev
+            db.collection(app.globalData.collection_user + '_' + env).where({
+              _openid: res.result.openid
+            }).get({
+              success: function(res) {
+                // 隐藏加载提示
+                wx.hideLoading()
+                
+                if (res.data && res.data.length > 0) {
+                  wx.setStorageSync('user_name', res.data[0].nickName)
+                  that.setData({
+                    userName: res.data[0].nickName
+                  })
+                } else {
+                  // 跳转到用户信息页面
+                  wx.navigateTo({
+                    url: '/pages/userInfo/userInfo'
+                  })
+                }
+              },
+              fail: function(err) {
+                // 隐藏加载提示
+                wx.hideLoading()
+                console.error('获取用户信息失败：', err)
+                wx.showToast({
+                  title: '登录失败',
+                  icon: 'error'
+                })
+              }
+            })
+          },
+          fail: function(err) {
+            // 隐藏加载提示
+            wx.hideLoading()
+            console.error('云函数调用失败：', err)
+            wx.showToast({
+              title: '登录失败',
+              icon: 'error'
+            })
+          }
         })
-
-        // 获取存储的用户昵称
-        var env = require('../../envList.js').dev
-        const { data } = await db.collection(app.globalData.collection_user + '_' + env).where({
-          _openid: this.data.openId
-        }).get()
-
-        // 如果有存储的昵称，使用存储的昵称
-        if (data.length > 0 && data[0].nickName) {
-          wx.setStorageSync('user_name', data[0].nickName)
-          that.setData({
-            userName: data[0].nickName
-          })
-        }
       },
       fail: (err) => {
-        console.error('登录失败', err)
+        // 隐藏加载提示
+        wx.hideLoading()
+        console.error('获取用户信息失败：', err)
         wx.showToast({
           title: '登录失败',
-          icon: 'error',
-          duration: 2000
+          icon: 'error'
         })
       }
     })
-
   },
 
   // 提交
@@ -238,7 +274,7 @@ Page({
     })
   },
 
-  // 处理退出登录
+  // 处理退出登��
   handleLogout() {
     this.setData({
       showMenu: false
