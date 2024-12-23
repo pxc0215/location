@@ -6,7 +6,8 @@ Page({
     userInfo: {
       nickName: '',
       avatarUrl: '',
-      company: ''
+      company: '',
+      phoneNumber: ''
     },
     openId: '',
     hasChanged: false
@@ -17,13 +18,15 @@ Page({
     const nickName = wx.getStorageSync('user_name')
     const avatarUrl = wx.getStorageSync('avatar_url')
     const company = wx.getStorageSync('company')
+    const phoneNumber = wx.getStorageSync('phone_number')
     const openId = wx.getStorageSync('open_id')
 
     this.setData({
       userInfo: {
         nickName,
         avatarUrl,
-        company
+        company,
+        phoneNumber
       },
       openId
     })
@@ -55,6 +58,54 @@ Page({
     })
   },
 
+  // 获取手机号
+  async getPhoneNumber(e) {
+    if (e.detail.errMsg !== "getPhoneNumber:ok") {
+      wx.showToast({
+        title: '获取手机号失败',
+        icon: 'none'
+      })
+      return
+    }
+
+    wx.showLoading({
+      title: '获取中...'
+    })
+
+    try {
+      // 调用云函数解密手机号
+      const result = await wx.cloud.callFunction({
+        name: 'getPhoneNumber',
+        data: {
+          cloudID: e.detail.cloudID
+        }
+      })
+
+      const phoneNumber = result.result.phoneInfo.phoneNumber
+      this.setData({
+        'userInfo.phoneNumber': phoneNumber,
+        hasChanged: true
+      })
+      wx.setStorageSync('phone_number', phoneNumber)
+      wx.hideLoading()
+    } catch (error) {
+      console.error('获取手机号失败：', error)
+      wx.hideLoading()
+      wx.showToast({
+        title: '获取手机号失败',
+        icon: 'none'
+      })
+    }
+  },
+
+  // 手动输入手机号
+  onInputPhone(e) {
+    this.setData({
+      'userInfo.phoneNumber': e.detail.value,
+      hasChanged: true
+    })
+  },
+
   // 保存用户信息
   async saveUserInfo() {
     if (!this.data.hasChanged) {
@@ -62,7 +113,7 @@ Page({
       return
     }
 
-    const { nickName, company } = this.data.userInfo
+    const { nickName, phoneNumber, company } = this.data.userInfo
     const openId = this.data.openId
 
     if (!nickName) {
@@ -89,7 +140,8 @@ Page({
         await userCollection.doc(data[0]._id).update({
           data: {
             nickName,
-            company
+            company,
+            phoneNumber
           }
         })
       } else {
@@ -98,7 +150,8 @@ Page({
           data: {
             nickName,
             avatarUrl: this.data.userInfo.avatarUrl,
-            company
+            company,
+            phoneNumber
           }
         })
       }
@@ -106,8 +159,9 @@ Page({
       // 更新本地存储
       wx.setStorageSync('user_name', nickName)
       wx.setStorageSync('company', company)
+      wx.setStorageSync('phone_number', phoneNumber)
 
-      // 获取页面实例并更新数据
+      // 更新首页显示
       const pages = getCurrentPages()
       const prevPage = pages[pages.length - 2]
       if (prevPage) {

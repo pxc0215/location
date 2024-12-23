@@ -11,6 +11,15 @@
            placeholder="请输入昵称"/>
   </view>
   <view class="info-item">
+    <text class="label">手机号</text>
+    <input class="nickname-input" 
+           value="{{userInfo.phoneNumber}}"
+           bindinput="onInputPhone"
+           type="number"
+           maxlength="11"
+           placeholder="请输入手机号"/>
+  </view>
+  <view class="info-item">
     <text class="label">企业</text>
     <input class="nickname-input" 
            value="{{userInfo.company}}"
@@ -19,7 +28,6 @@
   </view>
 </view>
 
-<!-- 添加导航栏按钮 -->
 <view class="nav-btn-container">
   <button class="save-btn" bindtap="saveUserInfo">完成</button>
 </view> 
