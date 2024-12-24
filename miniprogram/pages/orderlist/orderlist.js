@@ -8,7 +8,8 @@ Page({
     openId: '',
     userName: '登录',
     orders: [],
-    unfold: []
+    unfold: [],
+    isAdmin: false  // 添加管理员标识
   },
 
   // 格式化日期的函数
@@ -26,6 +27,8 @@ Page({
   onLoad(options) {
     that = this
     this.data.openId = wx.getStorageSync('open_id')
+    // 获取用户角色
+    this.getUserRole()
   },
 
   /**
@@ -77,63 +80,94 @@ Page({
 
   },
 
+  // 获取用户角色
+  async getUserRole() {
+    try {
+      var env = require('../../envList.js').dev
+      const db = wx.cloud.database()
+      const { data } = await db.collection(app.globalData.collection_user + '_' + env)
+        .where({
+          _openid: this.data.openId
+        })
+        .get()
+
+      if (data.length > 0) {
+        this.setData({
+          isAdmin: data[0].role === 'admin'
+        })
+      }
+      // 获取订单列表
+      this.getOrderList()
+    } catch (error) {
+      console.error('获取用户角色失败：', error)
+    }
+  },
+
   getOrderList() {
     wx.showLoading({
       title: '加载中...'
     })
 
     var env = require('../../envList.js').dev
-    db.collection(app.globalData.collection_order + '_' + env).where(db.command.or([{
-      _openid: this.data.openId
-    }, {
-      ownerid: this.data.openId
-    }])).get({
-      success: function (res) {
-        console.log("原始数据: ", res.data)
-        // 处理每个订单的时间显示和状态记录
-        const orders = res.data.map(order => {
-          console.log("处理订单时间，原始数据：", order)
-          
-          // 格式化创建时间
-          order.createTime = that.formatDate(order.time);
-          console.log("格式化后的创建时间：", order.createTime)
+    let query = {}
+    
+    // 如果不是管理员，只查询自己的订单
+    if (!this.data.isAdmin) {
+      query = db.command.or([
+        { _openid: this.data.openId },
+        { ownerid: this.data.openId }
+      ])
+    }
 
-          // 处理流转记录
-          if (order.flowRecords && Array.isArray(order.flowRecords)) {
-            order.flowRecords = order.flowRecords.map(record => {
-              console.log("流转记录时间戳：", record.timestamp)
-              return {
-                ...record,
-                time: that.formatDate(record.timestamp)
-              }
-            })
-          } else {
-            order.flowRecords = []
-          }
+    db.collection(app.globalData.collection_order + '_' + env)
+      .where(query)  // 根据角色决定查询条件
+      .get({
+        success: function (res) {
+          console.log("原始数据: ", res.data)
+          // 处理每个订单的时间显示和状态记录
+          const orders = res.data.map(order => {
+            console.log("处理订单时间，原始数据：", order)
+            
+            // 格式化创建时间
+            order.createTime = that.formatDate(order.time);
+            console.log("格式化后的创建时间：", order.createTime)
 
-          // 处理归档记录
-          if (order.archived) {
-            order.archiveTime = that.formatDate(order.archiveTimestamp)
-          }
+            // 处理流转记录
+            if (order.flowRecords && Array.isArray(order.flowRecords)) {
+              order.flowRecords = order.flowRecords.map(record => {
+                console.log("流转记录时间戳：", record.timestamp)
+                return {
+                  ...record,
+                  time: that.formatDate(record.timestamp)
+                }
+              })
+            } else {
+              order.flowRecords = []
+            }
 
-          console.log("处理后的订单数据：", order)
-          return order
-        })
+            // 处理归档记录
+            if (order.archived) {
+              order.archiveTime = that.formatDate(order.archiveTimestamp)
+            }
 
-        that.setData({
-          orders: orders
-        })
-        wx.hideLoading()
-      },
-      fail: function(err) {
-        console.error('获取订单列表失败：', err)
-        wx.hideLoading()
-        wx.showToast({
-          title: '加载失败',
-          icon: 'error'
-        })
-      }
-    })
+            console.log("处理后的订单数据：", order)
+            return order
+          })
+
+          that.setData({
+            orders: orders
+          })
+          wx.hideLoading()
+        },
+        fail: function(err) {
+          console.error('获取订单列表失败：', err)
+          wx.hideLoading()
+          wx.showToast({
+            title: '加载失败',
+            icon: 'error'
+          })
+        }
+      })
   },
 
   foldItem(event){

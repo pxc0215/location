@@ -141,7 +141,8 @@ Page({
           data: {
             nickName,
             company,
-            phoneNumber
+            phoneNumber,
+            role: data[0].role || 'user'
           }
         })
       } else {
@@ -151,7 +152,8 @@ Page({
             nickName,
             avatarUrl: this.data.userInfo.avatarUrl,
             company,
-            phoneNumber
+            phoneNumber,
+            role: 'user'
           }
         })
       }
