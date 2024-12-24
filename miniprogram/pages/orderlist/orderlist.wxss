@@ -17,30 +17,12 @@ page {
   margin-bottom: 24rpx;
   box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.04);
   overflow: hidden;
-  margin-right: 24rpx;
 }
 
 .order-header {
   display: flex;
   align-items: center;
   padding: 24rpx 24rpx 24rpx 12rpx;
-}
-
-.arrow-wrapper {
-  display: flex;
-  align-items: center;
-  padding: 0 8rpx;
-}
-
-.arrow-icon {
-  width: 40rpx;
-  height: 40rpx;
-  transition: transform 0.3s ease;
-  transform: rotate(0deg);
-}
-
-.arrow-down {
-  transform: rotate(90deg);
 }
 
 .order-image {

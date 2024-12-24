@@ -2,10 +2,6 @@
 <view class="order-list">
   <view class="order-item" wx:for="{{orders}}" wx:key="index">
     <view class="order-header" data-id="{{index}}" bind:tap="foldItem">
-      <view class="arrow-wrapper">
-        <image class="arrow-icon {{unfold[index] ? 'arrow-down' : ''}}" 
-               src="../../asset/{{unfold[index] ? 'down_arrows.svg' : 'right_arrows.svg'}}" />
-      </view>
       <image class="order-image" mode="aspectFill" src="{{item.files[0].id}}" />
       <view class="order-info">
         <view class="address-text">{{item.address}}</view>
