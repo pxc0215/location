@@ -1,0 +1,64 @@
+<view class="container">
+  <!-- 图片区域 -->
+  <view class="image-section">
+    <image class="order-image" src="{{order.files[0].id}}" bindtap="previewImage" mode="aspectFill"/>
+  </view>
+
+  <!-- 地址信息 -->
+  <view class="address-section">
+    <text class="address-text">{{order.address}}</text>
+  </view>
+
+  <!-- 备注信息（如果有） -->
+  <view wx:if="{{order.desc}}" class="desc-section">
+    <text class="desc-text">{{order.desc}}</text>
+  </view>
+
+  <!-- 用户信息和创建时间 -->
+  <view class="user-info">
+    <view class="user-left">
+      <image class="avatar" src="{{order.ownerAvatarUrl}}"/>
+      <text class="owner-name">{{order.ownername}}</text>
+    </view>
+    <text class="create-time">{{order.time}}</text>
+  </view>
+
+  <!-- 时间轴 -->
+  <view class="timeline-section">
+  <!-- 创建状态 -->
+  <view class="timeline-item">
+    <view class="timeline-dot"></view>
+    <view class="timeline-content">
+      <view class="timeline-header">
+        <view class="timeline-tag">创建</view>
+        <text class="timeline-user">{{order.ownername}}</text>
+        <text class="timeline-time">{{order.time}}</text>
+      </view>
+    </view>
+  </view>
+  <!-- 流转状态 -->
+  <block wx:for="{{order.flowRecords}}" wx:key="index">
+    <view class="timeline-item">
+      <view class="timeline-dot"></view>
+      <view class="timeline-content">
+        <view class="timeline-header">
+          <view class="timeline-tag">处理中</view>
+          <text class="timeline-user">{{item.userName}}</text>
+          <text class="timeline-time">{{item.time}}</text>
+        </view>
+      </view>
+    </view>
+  </block>
+  <!-- 归档状态 -->
+  <view wx:if="{{order.archived}}" class="timeline-item">
+    <view class="timeline-dot"></view>
+    <view class="timeline-content">
+      <view class="timeline-header">
+        <view class="timeline-tag">完成</view>
+        <text class="timeline-user">{{order.archiveUser}}</text>
+        <text class="timeline-time">{{order.archiveTime}}</text>
+      </view>
+    </view>
+  </view>
+  </view>
+</view>

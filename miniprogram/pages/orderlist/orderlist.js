@@ -72,7 +72,7 @@ Page({
       })
   },
 
-  viewOrderDetail(event) {
+  viewOrderDetail: function(event) {
     const orderId = event.currentTarget.dataset.orderid
     wx.navigateTo({
       url: '/pages/orderdetail/orderdetail?orderId=' + orderId

@@ -238,12 +238,14 @@ Page({
       return
     }
     var timestamp = Date.now()
+    const avatarUrl = wx.getStorageSync('avatar_url') || '/asset/default_avatar.png';
     var env = require('../../envList.js').dev
     // 在数据库中新建一条记录
     db.collection(app.globalData.collection_order + '_' + env).add({
       data: {
         ownerid: this.data.openId,
         ownername: this.data.userName,
+        ownerAvatarUrl: avatarUrl,
         sectionid: '11111', // 预留字段，以后用于订单可见性的权限处理
         files: this.data.files, // 图片列表
         location: this.data.location, // 经纬度
