@@ -8,14 +8,16 @@ Page({
     orderId: ''
   },
 
-  onLoad: function(options) {
+  onLoad: function (options) {
     that = this
     const orderId = options.orderId
-    this.setData({ orderId })
+    this.setData({
+      orderId
+    })
     this.getOrderDetail(orderId)
   },
 
-  getOrderDetail: function(orderId) {
+  getOrderDetail: function (orderId) {
     wx.showLoading({
       title: '加载中...'
     })
@@ -40,7 +42,9 @@ Page({
         if (order.archived) {
           order.archiveTime = this.formatTime(order.archiveTimestamp)
         }
-        this.setData({ order })
+        this.setData({
+          order
+        })
         wx.hideLoading()
       },
       fail: err => {
@@ -54,12 +58,26 @@ Page({
     })
   },
 
+  // 复制地址
+  copyAddress: function () {
+    wx.setClipboardData({
+      data: this.data.order.address,
+      success: function () {
+        wx.showToast({
+          title: '地址已复制',
+          icon: 'success',
+          duration: 2000
+        })
+      }
+    })
+  },
+
   // 时间格式化函数
-  formatTime: function(timestamp) {
+  formatTime: function (timestamp) {
     if (!timestamp) return ''
     const date = new Date(timestamp)
     const year = date.getFullYear()
-    const month = ('0' + (date.getMonth()+1)).slice(-2)
+    const month = ('0' + (date.getMonth() + 1)).slice(-2)
     const day = ('0' + date.getDate()).slice(-2)
     const hour = ('0' + date.getHours()).slice(-2)
     const minute = ('0' + date.getMinutes()).slice(-2)
@@ -67,7 +85,7 @@ Page({
   },
 
   // 预览图片
-  previewImage: function(e) {
+  previewImage: function (e) {
     const current = this.data.order.files.map(file => file.id)
     wx.previewImage({
       current: current[0],

@@ -147,7 +147,7 @@ Page({
     // 显示加载中
     wx.showLoading({
       title: '微信账户登录中...',
-      mask: true  // 添加遮罩层防止重复点击
+      mask: true // 添加遮罩层防止重复点击
     })
 
     wx.getUserProfile({
@@ -163,7 +163,7 @@ Page({
         // 获取用户openId
         wx.cloud.callFunction({
           name: 'getOpenId',
-          success: function(res) {
+          success: function (res) {
             console.log("云函数调用成功", res)
             that.setData({
               openId: res.result.openid
@@ -176,10 +176,10 @@ Page({
             db.collection(app.globalData.collection_user + '_' + env).where({
               _openid: res.result.openid
             }).get({
-              success: function(res) {
+              success: function (res) {
                 // 隐藏加载提示
                 wx.hideLoading()
-                
+
                 if (res.data && res.data.length > 0) {
                   wx.setStorageSync('user_name', res.data[0].nickName)
                   that.setData({
@@ -192,7 +192,7 @@ Page({
                   })
                 }
               },
-              fail: function(err) {
+              fail: function (err) {
                 // 隐藏加载提示
                 wx.hideLoading()
                 console.error('获取用户信息失败：', err)
@@ -203,7 +203,7 @@ Page({
               }
             })
           },
-          fail: function(err) {
+          fail: function (err) {
             // 隐藏加载提示
             wx.hideLoading()
             console.error('云函数调用失败：', err)
@@ -288,7 +288,7 @@ Page({
         if (res.confirm) {
           wx.removeStorageSync('user_name');
           wx.removeStorageSync('avatar_url');
-          
+
           this.setData({
             userName: '',
             avatarUrl: '../../asset/user_center.png'

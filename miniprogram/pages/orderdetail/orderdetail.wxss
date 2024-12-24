@@ -27,116 +27,67 @@
   color: #333;
 }
 
-/* 备注信息样式 */
-.desc-section {
-  padding: 24rpx;
-  border-bottom: 1rpx solid #eee;
-}
-
-.desc-text {
-  font-size: 28rpx;
-  color: #666;
-}
-
-/* 用户信息和创建时间样式 */
-.user-info {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 24rpx;
-  border-bottom: 1rpx solid #eee;
-}
-
-.user-left {
-  display: flex;
-  align-items: center;
-}
-
-.avatar {
-  width: 80rpx;
-  height: 80rpx;
-  border-radius: 50%;
-}
-
-.owner-name {
-  margin-left: 16rpx;
-  font-size: 28rpx;
-  color: #333;
-}
-
-.create-time {
-  font-size: 26rpx;
-  color: #999;
-}
-
 /* 时间轴样式 */
 .timeline-section {
   padding: 24rpx;
 }
 
-  .timeline-item {
-    display: flex;
-    align-items: center; /* 垂直居中 */
-    position: relative;
-    padding-left: 50rpx;
-    margin-bottom: 30rpx;
-  }
-
-  .timeline-item::before {
-    content: '';
-    position: absolute;
-    left: 20rpx;
-    top: 0;
-    bottom: 0;
-    width: 2rpx;
-    background-color: #ddd;
-  }
-
-  .timeline-dot {
-    position: absolute;
-    left: 14rpx;
-    width: 12rpx;
-    height: 12rpx;
-    background-color: #4A90E2;
-    border-radius: 50%;
-    top: 50%; /* 垂直居中 */
-    transform: translateY(-50%);
-  }
-
-  .timeline-content {
-    margin-left: 40rpx; /* 调整与小圆点的间距 */
-    flex: 1;
-  }
-
-.timeline-title {
-  font-size: 28rpx;
-  color: #333;
-  font-weight: bold;
+.timeline-item {
+  position: relative;
+  padding-left: 50rpx;
+  margin-bottom: 30rpx;
 }
 
- .timeline-header {
-    display: flex;
-    align-items: center;
-  }
+.timeline-dot {
+  position: absolute;
+  left: 20rpx;
+  width: 12rpx;
+  height: 12rpx;
+  background-color: #4A90E2;
+  border-radius: 50%;
+  top: 18rpx;
+  /* 与标签、用户名、时间居中对齐 */
+}
 
-  .timeline-tag {
-    background-color: #4A90E2;
-    color: #fff;
-    padding: 4rpx 10rpx;
-    border-radius: 8rpx;
-    font-size: 24rpx;
-    margin-right: 16rpx;
-  }
+.timeline-content {
+  margin-left: 10rpx;
+  /* 调整与小圆点的间距 */
+}
 
-  .timeline-user {
-    font-size: 26rpx;
-    color: #333;
-    flex: 1;
-  }
+.timeline-header {
+  display: flex;
+  align-items: center;
+}
 
-  .timeline-time {
-    font-size: 24rpx;
-    color: #999;
-    text-align: right;
-    width: 200rpx; /* 根据需要调整 */
-  }
+.timeline-tag {
+  background-color: #4A90E2;
+  color: #fff;
+  padding: 4rpx 10rpx;
+  border-radius: 8rpx;
+  font-size: 24rpx;
+  margin-right: 16rpx;
+}
+
+.timeline-user {
+  font-size: 26rpx;
+  color: #333;
+  margin-right: auto;
+  /* 占据剩余空间，推动时间到右侧 */
+}
+
+.timeline-time {
+  font-size: 24rpx;
+  color: #999;
+}
+
+/* 备注信息的样式 */
+.timeline-desc {
+  margin-top: 8rpx;
+  /* 确保没有左侧的缩进或边距 */
+  margin-left: 80rpx;
+}
+
+.desc-text {
+  font-size: 26rpx;
+  color: #666;
+}

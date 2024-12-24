@@ -7,7 +7,7 @@
         <image class="usercenter {{!userName || userName === '登录' ? 'avatar-gray' : ''}}" src="{{avatarUrl}}"></image>
         <view class="usertitle">{{userName || '请登录'}}</view>
       </view>
-      
+
       <!-- 下拉菜单 -->
       <view class="dropdown-menu" wx:if="{{showMenu && userName && userName !== '登录'}}">
         <view class="menu-item" catchtap="toUserInfo">

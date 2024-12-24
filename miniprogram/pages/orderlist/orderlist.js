@@ -21,7 +21,9 @@ Page({
     try {
       var env = require('../../envList.js').dev
       const db = wx.cloud.database()
-      const { data } = await db.collection(app.globalData.collection_user + '_' + env)
+      const {
+        data
+      } = await db.collection(app.globalData.collection_user + '_' + env)
         .where({
           _openid: this.data.openId
         })
@@ -45,11 +47,14 @@ Page({
 
     var env = require('../../envList.js').dev
     let query = {}
-    
+
     if (!this.data.isAdmin) {
-      query = db.command.or([
-        { _openid: this.data.openId },
-        { ownerid: this.data.openId }
+      query = db.command.or([{
+          _openid: this.data.openId
+        },
+        {
+          ownerid: this.data.openId
+        }
       ])
     }
 
@@ -65,14 +70,14 @@ Page({
           })
           wx.hideLoading()
         },
-        fail: function(err) {
+        fail: function (err) {
           console.error(err)
           wx.hideLoading()
         }
       })
   },
 
-  viewOrderDetail: function(event) {
+  viewOrderDetail: function (event) {
     const orderId = event.currentTarget.dataset.orderid
     wx.navigateTo({
       url: '/pages/orderdetail/orderdetail?orderId=' + orderId

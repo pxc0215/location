@@ -1,64 +1,58 @@
 <view class="container">
   <!-- 图片区域 -->
   <view class="image-section">
-    <image class="order-image" src="{{order.files[0].id}}" bindtap="previewImage" mode="aspectFill"/>
+    <image class="order-image" src="{{order.files[0].id}}" bindtap="previewImage" mode="aspectFill" />
   </view>
 
-  <!-- 地址信息 -->
-  <view class="address-section">
+  <!-- 地址信息，可长按复制 -->
+  <view class="address-section" bindlongpress="copyAddress">
     <text class="address-text">{{order.address}}</text>
-  </view>
-
-  <!-- 备注信息（如果有） -->
-  <view wx:if="{{order.desc}}" class="desc-section">
-    <text class="desc-text">{{order.desc}}</text>
-  </view>
-
-  <!-- 用户信息和创建时间 -->
-  <view class="user-info">
-    <view class="user-left">
-      <image class="avatar" src="{{order.ownerAvatarUrl}}"/>
-      <text class="owner-name">{{order.ownername}}</text>
-    </view>
-    <text class="create-time">{{order.time}}</text>
   </view>
 
   <!-- 时间轴 -->
   <view class="timeline-section">
-  <!-- 创建状态 -->
-  <view class="timeline-item">
-    <view class="timeline-dot"></view>
-    <view class="timeline-content">
-      <view class="timeline-header">
-        <view class="timeline-tag">创建</view>
-        <text class="timeline-user">{{order.ownername}}</text>
-        <text class="timeline-time">{{order.time}}</text>
-      </view>
-    </view>
-  </view>
-  <!-- 流转状态 -->
-  <block wx:for="{{order.flowRecords}}" wx:key="index">
+    <!-- 创建状态 -->
     <view class="timeline-item">
       <view class="timeline-dot"></view>
       <view class="timeline-content">
         <view class="timeline-header">
-          <view class="timeline-tag">处理中</view>
-          <text class="timeline-user">{{item.userName}}</text>
-          <text class="timeline-time">{{item.time}}</text>
+          <view class="timeline-tag">创建</view>
+          <view class="timeline-user">
+            {{order.ownername}}
+            <text wx:if="{{order.ownerPhone}}">（{{order.ownerPhone}}）</text>
+          </view>
+          <view class="timeline-time">{{order.time}}</view>
+        </view>
+        <!-- 备注信息（如果有） -->
+        <view wx:if="{{order.desc}}" class="timeline-desc">
+          <text class="desc-text">备注：{{order.desc}}</text>
         </view>
       </view>
     </view>
-  </block>
-  <!-- 归档状态 -->
-  <view wx:if="{{order.archived}}" class="timeline-item">
-    <view class="timeline-dot"></view>
-    <view class="timeline-content">
-      <view class="timeline-header">
-        <view class="timeline-tag">完成</view>
-        <text class="timeline-user">{{order.archiveUser}}</text>
-        <text class="timeline-time">{{order.archiveTime}}</text>
+    <!-- 处理状态 -->
+    <block wx:for="{{order.flowRecords}}" wx:for-item="item" wx:key="index">
+      <view class="timeline-item">
+        <view class="timeline-dot"></view>
+        <view class="timeline-content">
+          <view class="timeline-header">
+            <view class="timeline-tag">处理中</view>
+            <view class="timeline-user">{{item.userName}}</view>
+            <view class="timeline-time">{{item.time}}</view>
+          </view>
+          <!-- 如果有备注信息，可以在这里添加 -->
+        </view>
+      </view>
+    </block>
+    <!-- 完成状态 -->
+    <view wx:if="{{order.archived}}" class="timeline-item">
+      <view class="timeline-dot"></view>
+      <view class="timeline-content">
+        <view class="timeline-header">
+          <view class="timeline-tag">完成</view>
+          <view class="timeline-user">{{order.archiveUser}}</view>
+          <view class="timeline-time">{{order.archiveTime}}</view>
+        </view>
       </view>
     </view>
-  </view>
   </view>
 </view>

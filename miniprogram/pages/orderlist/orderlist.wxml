@@ -1,7 +1,7 @@
 <!--pages/orderlist.wxml-->
 <view class="order-list">
   <view class="order-item" wx:for="{{orders}}" wx:key="index" bindtap="viewOrderDetail" data-orderid="{{item._id}}">
-    <view class="order-header" data-id="{{index}}" >
+    <view class="order-header" data-id="{{index}}">
       <image class="order-image" mode="aspectFill" src="{{item.files[0].id}}" />
       <view class="order-info">
         <view class="address-text">{{item.address}}</view>

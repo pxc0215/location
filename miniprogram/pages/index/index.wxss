@@ -119,7 +119,8 @@ page {
 }
 
 .avatar-gray {
-  filter: grayscale(100%);  /* 未登录时显示灰色 */
+  filter: grayscale(100%);
+  /* 未登录时显示灰色 */
 }
 
 .header {
