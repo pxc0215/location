@@ -61,10 +61,34 @@
     <image class="edit-icon" src="/asset/edit.svg"></image>
   </view>
   <view class="menu {{showMenu ? 'show' : ''}}">
-    <view class="menu-item">处理</view>
+    <view class="menu-item" bindtap="onMenuItemClick" data-action="process">处理</view>
     <view class="menu-item">流转</view>
   </view>
 </view>
 
 <!-- 遮罩层 -->
 <view class="mask {{showMenu ? 'show' : ''}}" bindtap="hideMenu"></view>
+
+<!-- 状态修改弹窗 -->
+<view class="modal {{showStatusModal ? 'show' : ''}}">
+  <view class="modal-content">
+    <view class="modal-title">修改状态</view>
+    <view class="status-options">
+      <view class="status-option" bindtap="selectStatus" data-status="processing">
+        <radio checked="{{selectedStatus === 'processing'}}"/>
+        <text>处理中</text>
+      </view>
+      <view class="status-option" bindtap="selectStatus" data-status="completed">
+        <radio checked="{{selectedStatus === 'completed'}}"/>
+        <text>已完成</text>
+      </view>
+    </view>
+    <view class="remark-input">
+      <textarea placeholder="请输入备注" value="{{statusRemark}}" bindinput="onRemarkInput"></textarea>
+    </view>
+    <view class="modal-buttons">
+      <button class="btn-cancel" bindtap="closeStatusModal">取消</button>
+      <button class="btn-confirm" bindtap="confirmStatusChange">确定</button>
+    </view>
+  </view>
+</view>

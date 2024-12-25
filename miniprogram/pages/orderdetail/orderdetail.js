@@ -6,7 +6,10 @@ Page({
   data: {
     order: {},
     orderId: '',
-    showMenu: false
+    showMenu: false,
+    showStatusModal: false,
+    selectedStatus: '',
+    statusRemark: ''
   },
 
   onLoad: function (options) {
@@ -106,5 +109,54 @@ Page({
     this.setData({
       showMenu: false
     });
+  },
+
+  // 点击处理按钮
+  handleProcess() {
+    this.setData({
+      showStatusModal: true,
+      showMenu: false,
+      selectedStatus: 'processing', // 默认选中"处理中"
+      statusRemark: ''
+    });
+  },
+
+  // 选择状态
+  selectStatus(e) {
+    this.setData({
+      selectedStatus: e.currentTarget.dataset.status
+    });
+  },
+
+  // 备注输入
+  onRemarkInput(e) {
+    this.setData({
+      statusRemark: e.detail.value
+    });
+  },
+
+  // 关闭状态修改弹窗
+  closeStatusModal() {
+    this.setData({
+      showStatusModal: false
+    });
+  },
+
+  // 确认修改状态
+  confirmStatusChange() {
+    const { selectedStatus, statusRemark } = this.data;
+    // TODO: 处理状态修改的逻辑
+    console.log('Status:', selectedStatus);
+    console.log('Remark:', statusRemark);
+    this.closeStatusModal();
+  },
+
+  // 修改菜单项点击事件
+  onMenuItemClick(e) {
+    const action = e.currentTarget.dataset.action;
+    if (action === 'process') {
+      this.handleProcess();
+    }
+    // ... 其他菜单项处理
   }
 })
