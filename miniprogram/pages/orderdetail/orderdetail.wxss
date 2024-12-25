@@ -71,8 +71,9 @@
 .timeline-user {
   font-size: 26rpx;
   color: #333;
+  display: inline-flex;
+  align-items: center;
   margin-right: auto;
-  /* 占据剩余空间，推动时间到右侧 */
 }
 
 .timeline-time {
@@ -238,4 +239,13 @@
 .btn-confirm {
   background: #4A90E2;
   color: #fff;
+}
+
+.phone-icon {
+  width: 28rpx;
+  height: 28rpx;
+  margin-left: 12rpx;
+  vertical-align: -2rpx;
+  opacity: 0.9;
+  filter: invert(0.2);
 }

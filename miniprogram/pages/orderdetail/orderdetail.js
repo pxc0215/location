@@ -24,42 +24,63 @@ Page({
   getOrderDetail: function (orderId) {
     wx.showLoading({
       title: '加载中...'
-    })
-    var env = require('../../envList.js').dev
-    const collectionName = app.globalData.collection_order + '_' + env
+    });
+    const env = require('../../envList.js').dev;
+    const collectionName = app.globalData.collection_order + '_' + env;
+    const db = wx.cloud.database();
 
     db.collection(collectionName).doc(orderId).get({
       success: res => {
-        let order = res.data
-        // 格式化时间
-        order.time = this.formatTime(order.time)
-        // 如果有头像，设置头像
-        order.ownerAvatarUrl = order.ownerAvatarUrl || '/asset/default_avatar.png';
-        // 格式化流转记录时间
+        let order = res.data;
+        
+        // 创建一个包含所有时间轴事件的数组
+        let timelineEvents = [];
+
+        // 添加创建记录
+        timelineEvents.push({
+          type: 'create',
+          time: order.time,
+          userName: order.ownername,
+          userPhone: order.ownerPhone,
+          userId: order.ownerid,
+          desc: order.desc
+        });
+
+        // 添加流转记录
         if (order.flowRecords && order.flowRecords.length > 0) {
-          order.flowRecords = order.flowRecords.map(item => {
-            item.time = this.formatTime(item.timestamp)
-            return item
-          })
+          timelineEvents = timelineEvents.concat(order.flowRecords.map(record => ({
+            type: 'flow',
+            time: record.time,
+            userName: record.userName,
+            userId: record.userId,
+            status: record.status,
+            remark: record.remark
+          })));
         }
-        // 归档时间
-        if (order.archived) {
-          order.archiveTime = this.formatTime(order.archiveTimestamp)
-        }
-        this.setData({
-          order
-        })
-        wx.hideLoading()
+
+        // 按时间戳倒序排序（最新的在前）
+        timelineEvents.sort((a, b) => b.time - a.time);
+
+        // 格式化时间
+        timelineEvents = timelineEvents.map(event => ({
+          ...event,
+          time: this.formatTime(event.time)
+        }));
+
+        // 更新订单数据
+        order.timelineEvents = timelineEvents;
+        this.setData({ order });
+        wx.hideLoading();
       },
       fail: err => {
-        wx.hideLoading()
+        wx.hideLoading();
         wx.showToast({
           title: '加载失败',
           icon: 'none'
-        })
-        console.error(err)
+        });
+        console.error('获取订单详情失败：', err);
       }
-    })
+    });
   },
 
   // 复制地址
@@ -144,11 +165,58 @@ Page({
 
   // 确认修改状态
   confirmStatusChange() {
-    const { selectedStatus, statusRemark } = this.data;
-    // TODO: 处理状态修改的逻辑
-    console.log('Status:', selectedStatus);
-    console.log('Remark:', statusRemark);
-    this.closeStatusModal();
+    const { selectedStatus, statusRemark, orderId } = this.data;
+    
+    // 显示加载提示
+    wx.showLoading({
+      title: '提交中...',
+    });
+
+    const env = require('../../envList.js').dev;
+    const collectionName = app.globalData.collection_order + '_' + env;
+    const db = wx.cloud.database();
+
+    // 准备更新的数据
+    const now = new Date();
+    const flowRecord = {
+      status: selectedStatus,
+      remark: statusRemark || '', // 备注为空时存储空字符串
+      time: now.getTime(),
+      userName: wx.getStorageSync('user_name') || '未知用户',
+      userId: wx.getStorageSync('open_id')
+    };
+
+    // 更新数据库
+    db.collection(collectionName).doc(orderId).update({
+      data: {
+        // 添加新的流转记录
+        flowRecords: db.command.push(flowRecord),
+        // 如果状态是"已完成"，更新归档信息
+        ...(selectedStatus === 'completed' ? {
+          archived: true,
+          archiveTime: now.getTime(),
+          archiveUser: flowRecord.userName
+        } : {})
+      },
+      success: res => {
+        wx.hideLoading();
+        // 更新成功后刷新页面数据
+        this.getOrderDetail(orderId);
+        wx.showToast({
+          title: '更新成功',
+          icon: 'success'
+        });
+        this.closeStatusModal();
+      },
+      fail: err => {
+        wx.hideLoading();
+        wx.showToast({
+          title: '更新失败',
+          icon: 'error'
+        });
+        console.error('更新失败：', err);
+      }
+    });
   },
 
   // 修改菜单项点击事件
@@ -158,5 +226,60 @@ Page({
       this.handleProcess();
     }
     // ... 其他菜单项处理
+  },
+
+  // 处理拨打电话
+  makePhoneCall(e) {
+    const userId = e.currentTarget.dataset.userid;
+    if (!userId) {
+      wx.showToast({
+        title: '无法获取用户信息',
+        icon: 'none'
+      });
+      return;
+    }
+
+    // 获取用户手机号
+    const env = require('../../envList.js').dev;
+    const userCollection = app.globalData.collection_user + '_' + env;
+    const db = wx.cloud.database();
+
+    wx.showLoading({
+      title: '获取手机号...'
+    });
+
+    db.collection(userCollection).where({
+      _openid: userId
+    }).get({
+      success: res => {
+        wx.hideLoading();
+        if (res.data.length > 0 && res.data[0].phoneNumber) {
+          // 有手机号，调起拨号面板
+          wx.makePhoneCall({
+            phoneNumber: res.data[0].phoneNumber,
+            fail: (err) => {
+              wx.showToast({
+                title: '拨号失败',
+                icon: 'none'
+              });
+            }
+          });
+        } else {
+          // 没有手机号
+          wx.showToast({
+            title: '无法获取用户手机号',
+            icon: 'none'
+          });
+        }
+      },
+      fail: err => {
+        wx.hideLoading();
+        wx.showToast({
+          title: '获取用户信息失败',
+          icon: 'none'
+        });
+        console.error('获取用户手机号失败：', err);
+      }
+    });
   }
 })

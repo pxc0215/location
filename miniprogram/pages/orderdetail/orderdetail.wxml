@@ -11,49 +11,36 @@
 
   <!-- 时间轴 -->
   <view class="timeline-section">
-    <!-- 创建状态 -->
-    <view class="timeline-item">
-      <view class="timeline-dot"></view>
-      <view class="timeline-content">
-        <view class="timeline-header">
-          <view class="timeline-tag">创建</view>
-          <view class="timeline-user">
-            {{order.ownername}}
-            <text wx:if="{{order.ownerPhone}}">（{{order.ownerPhone}}）</text>
-          </view>
-          <view class="timeline-time">{{order.time}}</view>
-        </view>
-        <!-- 备注信息（如果有） -->
-        <view wx:if="{{order.desc}}" class="timeline-desc">
-          <text class="desc-text">备注：{{order.desc}}</text>
-        </view>
-      </view>
-    </view>
-    <!-- 处理状态 -->
-    <block wx:for="{{order.flowRecords}}" wx:for-item="item" wx:key="index">
+    <block wx:for="{{order.timelineEvents}}" wx:key="time">
       <view class="timeline-item">
         <view class="timeline-dot"></view>
         <view class="timeline-content">
           <view class="timeline-header">
-            <view class="timeline-tag">处理中</view>
-            <view class="timeline-user">{{item.userName}}</view>
+            <view class="timeline-tag">
+              {{item.type === 'create' ? '创建' : 
+                (item.status === 'completed' ? '完成' : '处理')}}
+            </view>
+            <view class="timeline-user">
+              {{item.userName}}
+              <image 
+                class="phone-icon" 
+                src="/asset/phone.svg" 
+                bindtap="makePhoneCall" 
+                data-userid="{{item.userId}}"
+              />
+            </view>
             <view class="timeline-time">{{item.time}}</view>
           </view>
-          <!-- 如果有备注信息，可以在这里添加 -->
+          <!-- 备注信息（如果有） -->
+          <view wx:if="{{item.type === 'create' && item.desc}}" class="timeline-desc">
+            <text class="desc-text">{{item.desc}}</text>
+          </view>
+          <view wx:if="{{item.type === 'flow' && item.remark}}" class="timeline-desc">
+            <text class="desc-text">{{item.remark}}</text>
+          </view>
         </view>
       </view>
     </block>
-    <!-- 完成状态 -->
-    <view wx:if="{{order.archived}}" class="timeline-item">
-      <view class="timeline-dot"></view>
-      <view class="timeline-content">
-        <view class="timeline-header">
-          <view class="timeline-tag">完成</view>
-          <view class="timeline-user">{{order.archiveUser}}</view>
-          <view class="timeline-time">{{order.archiveTime}}</view>
-        </view>
-      </view>
-    </view>
   </view>
 
   <!-- 悬浮按钮和菜单 -->
@@ -84,7 +71,7 @@
       </view>
     </view>
     <view class="remark-input">
-      <textarea placeholder="请输入备注" value="{{statusRemark}}" bindinput="onRemarkInput"></textarea>
+      <textarea placeholder="备注信息（选填）" value="{{statusRemark}}" bindinput="onRemarkInput"></textarea>
     </view>
     <view class="modal-buttons">
       <button class="btn-cancel" bindtap="closeStatusModal">取消</button>
