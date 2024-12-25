@@ -10,7 +10,8 @@ Page({
       phoneNumber: ''
     },
     openId: '',
-    hasChanged: false
+    hasChanged: false,
+    isAdmin: false
   },
 
   onLoad() {
@@ -29,6 +30,12 @@ Page({
         phoneNumber
       },
       openId
+    })
+
+    // 检查是否为管理员
+    const userRole = wx.getStorageSync('user_role')
+    this.setData({
+      isAdmin: userRole === 'admin'
     })
   },
 
@@ -188,6 +195,15 @@ Page({
       wx.showToast({
         title: '保存失败',
         icon: 'error'
+      })
+    }
+  },
+
+  // 长按头像文字处理
+  onLongPressLabel: function(e) {
+    if (this.data.isAdmin) {
+      wx.navigateTo({
+        url: '/pages/usermanage/userManage'
       })
     }
   }

@@ -11,7 +11,8 @@ Page({
     openId: '',
     userName: '',
     avatarUrl: '../../asset/user_center.png',
-    showMenu: false
+    showMenu: false,
+    isLogin: false
   },
   /**
    * 页面装载回调
@@ -156,8 +157,10 @@ Page({
         console.log("获取用户信息成功", res)
         const userInfo = res.userInfo
         that.setData({
+          userName: userInfo.nickName,
           avatarUrl: userInfo.avatarUrl
         })
+        wx.setStorageSync('user_name', userInfo.nickName)
         wx.setStorageSync('avatar_url', userInfo.avatarUrl)
 
         // 获取用户openId
@@ -179,18 +182,17 @@ Page({
               success: function (res) {
                 // 隐藏加载提示
                 wx.hideLoading()
-
                 if (res.data && res.data.length > 0) {
                   wx.setStorageSync('user_name', res.data[0].nickName)
-                  that.setData({
-                    userName: res.data[0].nickName
-                  })
+                  wx.setStorageSync('user_role', res.data[0].role || 'user')
                 } else {
-                  // 跳转到用户信息页面
-                  wx.navigateTo({
-                    url: '/pages/userInfo/userInfo'
-                  })
+                  // 新用户默认为普通用户
+                  wx.setStorageSync('user_role', 'user')
                 }
+                that.setData({
+                  isLogin: true,
+                  userName: res.data[0].nickName
+                })
               },
               fail: function (err) {
                 // 隐藏加载提示
