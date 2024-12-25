@@ -33,10 +33,10 @@
           </view>
           <!-- 备注信息（如果有） -->
           <view wx:if="{{item.type === 'create' && item.desc}}" class="timeline-desc">
-            <text class="desc-text">{{item.desc}}</text>
+            <text class="desc-text">备注：{{item.desc}}</text>
           </view>
           <view wx:if="{{item.type === 'flow' && item.remark}}" class="timeline-desc">
-            <text class="desc-text">{{item.remark}}</text>
+            <text class="desc-text">备注：{{item.remark}}</text>
           </view>
         </view>
       </view>

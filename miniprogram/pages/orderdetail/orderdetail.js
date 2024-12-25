@@ -26,50 +26,62 @@ Page({
       title: '加载中...'
     });
     const env = require('../../envList.js').dev;
-    const collectionName = app.globalData.collection_order + '_' + env;
-    const db = wx.cloud.database();
+    const orderCollection = app.globalData.collection_order + '_' + env;
+    const handle = 'get';
 
-    db.collection(collectionName).doc(orderId).get({
+    wx.cloud.callFunction({
+      name: 'orderDetail',
+      data: {
+        orderId,
+        handle,
+        orderCollection
+      },
       success: res => {
-        let order = res.data;
-        
-        // 创建一个包含所有时间轴事件的数组
-        let timelineEvents = [];
+        if (res.result.success) {
+          let order = res.result.data;
+          // 创建一个包含所有时间轴事件的数组
+          let timelineEvents = [];
+          // 添加创建记录
+          timelineEvents.push({
+            type: 'create',
+            time: order.time,
+            userName: order.ownername,
+            userPhone: order.ownerPhone,
+            userId: order.ownerid,
+            desc: order.desc
+          });
 
-        // 添加创建记录
-        timelineEvents.push({
-          type: 'create',
-          time: order.time,
-          userName: order.ownername,
-          userPhone: order.ownerPhone,
-          userId: order.ownerid,
-          desc: order.desc
-        });
+          // 添加流转记录
+          if (order.flowRecords && order.flowRecords.length > 0) {
+            timelineEvents = timelineEvents.concat(order.flowRecords.map(record => ({
+              type: 'flow',
+              time: record.time,
+              userName: record.userName,
+              userId: record.userId,
+              status: record.status,
+              remark: record.remark
+            })));
+          }
 
-        // 添加流转记录
-        if (order.flowRecords && order.flowRecords.length > 0) {
-          timelineEvents = timelineEvents.concat(order.flowRecords.map(record => ({
-            type: 'flow',
-            time: record.time,
-            userName: record.userName,
-            userId: record.userId,
-            status: record.status,
-            remark: record.remark
-          })));
+          // 按时间戳倒序排序（最新的在前）
+          timelineEvents.sort((a, b) => b.time - a.time);
+
+          // 格式化时间
+          timelineEvents = timelineEvents.map(event => ({
+            ...event,
+            time: this.formatTime(event.time)
+          }));
+
+          // 更新订单数据
+          order.timelineEvents = timelineEvents;
+          this.setData({
+            order
+          });
+        } else {
+          wx.showToast({
+            title: '加载失败'
+          })
         }
-
-        // 按时间戳倒序排序（最新的在前）
-        timelineEvents.sort((a, b) => b.time - a.time);
-
-        // 格式化时间
-        timelineEvents = timelineEvents.map(event => ({
-          ...event,
-          time: this.formatTime(event.time)
-        }));
-
-        // 更新订单数据
-        order.timelineEvents = timelineEvents;
-        this.setData({ order });
         wx.hideLoading();
       },
       fail: err => {
@@ -165,18 +177,23 @@ Page({
 
   // 确认修改状态
   confirmStatusChange() {
-    const { selectedStatus, statusRemark, orderId } = this.data;
-    
+    const {
+      selectedStatus,
+      statusRemark,
+      orderId
+    } = this.data;
+
     // 显示加载提示
     wx.showLoading({
       title: '提交中...',
     });
 
     const env = require('../../envList.js').dev;
-    const collectionName = app.globalData.collection_order + '_' + env;
-    const db = wx.cloud.database();
+    const orderCollection = app.globalData.collection_order + '_' + env;
+
 
     // 准备更新的数据
+    const handle = 'update';
     const now = new Date();
     const flowRecord = {
       status: selectedStatus,
@@ -187,18 +204,16 @@ Page({
     };
 
     // 更新数据库
-    db.collection(collectionName).doc(orderId).update({
+    wx.cloud.callFunction({
+      name: 'orderDetail',
       data: {
-        // 添加新的流转记录
-        flowRecords: db.command.push(flowRecord),
-        // 如果状态是"已完成"，更新归档信息
-        ...(selectedStatus === 'completed' ? {
-          archived: true,
-          archiveTime: now.getTime(),
-          archiveUser: flowRecord.userName
-        } : {})
+        orderId,
+        handle,
+        orderCollection,
+        flowRecord
       },
       success: res => {
+        console.log(res)
         wx.hideLoading();
         // 更新成功后刷新页面数据
         this.getOrderDetail(orderId);
