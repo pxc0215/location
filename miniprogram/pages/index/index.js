@@ -337,11 +337,6 @@ Page({
     }
   },
 
-  // 阻止事件冒泡
-  stopPropagation(e) {
-    e.stopPropagation();
-  },
-
   // 隐藏菜单
   hideMenu() {
     this.setData({

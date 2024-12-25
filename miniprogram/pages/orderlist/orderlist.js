@@ -5,57 +5,52 @@ let db = wx.cloud.database()
 
 Page({
   data: {
-    openId: '',
-    userName: '登录',
-    orders: [],
-    isAdmin: false
+    orders: []
   },
 
   onLoad(options) {
     that = this
-    this.data.openId = wx.getStorageSync('open_id')
-    const userRole = wx.getStorageSync('user_role')
-    this.setData({
-      isAdmin: userRole === 'admin'
-    })
     this.getOrderList()
   },
 
-  getOrderList() {
+  getOrderList: function () {
     wx.showLoading({
       title: '加载中...'
     })
 
-    var env = require('../../envList.js').dev
-    let query = {}
-
-    if (!this.data.isAdmin) {
-      query = db.command.or([{
-          _openid: this.data.openId
-        },
-        {
-          ownerid: this.data.openId
-        }
-      ])
-    }
-
-    db.collection(app.globalData.collection_order + '_' + env)
-      .where(query)
-      .get({
-        success: function (res) {
-          res.data.forEach(order => {
+    const env = require('../../envList.js').dev
+    const userCollection = app.globalData.collection_user + '_' + env
+    const orderCollection = app.globalData.collection_order + '_' + env
+    // 使用云函数获取订单列表(如果通过客户端直接访问数据，只能访问到用户本人创建的数据，除非修改云函数权限，但这样并不安全)
+    wx.cloud.callFunction({
+      name: 'getOrderList',
+      data: {
+        userCollection,
+        orderCollection
+      },
+      success: res => {
+        if (res.result.success) {
+          res.result.data.forEach(order => {
             order.createTime = formatTime(order.time) // 格式化时间
           })
-          that.setData({
-            orders: res.data
+          this.setData({
+            orders: res.result.data
           })
-          wx.hideLoading()
-        },
-        fail: function (err) {
-          console.error(err)
-          wx.hideLoading()
+        } else {
+          wx.showToast({
+            title: '加载失败'
+          })
         }
-      })
+        wx.hideLoading()
+      },
+      fail: err => {
+        console.error('获取订单列表失败：', err)
+        wx.hideLoading()
+        wx.showToast({
+          title: '加载失败'
+        })
+      }
+    })
   },
 
   viewOrderDetail: function (event) {
