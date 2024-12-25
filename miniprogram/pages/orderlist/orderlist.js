@@ -14,30 +14,11 @@ Page({
   onLoad(options) {
     that = this
     this.data.openId = wx.getStorageSync('open_id')
-    this.getUserRole()
-  },
-
-  async getUserRole() {
-    try {
-      var env = require('../../envList.js').dev
-      const db = wx.cloud.database()
-      const {
-        data
-      } = await db.collection(app.globalData.collection_user + '_' + env)
-        .where({
-          _openid: this.data.openId
-        })
-        .get()
-
-      if (data.length > 0) {
-        this.setData({
-          isAdmin: data[0].role === 'admin'
-        })
-        this.getOrderList()
-      }
-    } catch (err) {
-      console.error(err)
-    }
+    const userRole = wx.getStorageSync('user_role')
+    this.setData({
+      isAdmin: userRole === 'admin'
+    })
+    this.getOrderList()
   },
 
   getOrderList() {
