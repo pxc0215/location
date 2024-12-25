@@ -5,7 +5,8 @@ let that
 Page({
   data: {
     order: {},
-    orderId: ''
+    orderId: '',
+    showMenu: false
   },
 
   onLoad: function (options) {
@@ -91,5 +92,19 @@ Page({
       current: current[0],
       urls: current
     })
+  },
+
+  // 切换菜单显示状态
+  toggleMenu() {
+    this.setData({
+      showMenu: !this.data.showMenu
+    });
+  },
+
+  // 隐藏菜单
+  hideMenu() {
+    this.setData({
+      showMenu: false
+    });
   }
 })

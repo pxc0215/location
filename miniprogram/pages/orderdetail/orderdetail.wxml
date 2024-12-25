@@ -55,4 +55,16 @@
       </view>
     </view>
   </view>
+
+  <!-- 悬浮按钮和菜单 -->
+  <view class="floating-button" bindtap="toggleMenu">
+    <image class="edit-icon" src="/asset/edit.svg"></image>
+  </view>
+  <view class="menu {{showMenu ? 'show' : ''}}">
+    <view class="menu-item">处理</view>
+    <view class="menu-item">流转</view>
+  </view>
 </view>
+
+<!-- 遮罩层 -->
+<view class="mask {{showMenu ? 'show' : ''}}" bindtap="hideMenu"></view>

@@ -91,3 +91,70 @@
   font-size: 26rpx;
   color: #666;
 }
+
+/* 订单详情页样式 */
+.floating-button {
+  position: fixed;
+  bottom: 120rpx;
+  right: 40rpx;
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 50%;
+  background-color: #4A90E2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 4rpx 8rpx rgba(0, 0, 0, 0.2);
+  z-index: 999;
+}
+
+.edit-icon {
+  width: 50rpx;
+  height: 50rpx;
+  filter: brightness(0) invert(1);
+}
+
+.menu {
+  position: fixed;
+  bottom: 240rpx;
+  right: 40rpx;
+  width: 160rpx;
+  background-color: #fff;
+  border-radius: 8rpx;
+  box-shadow: 0 4rpx 8rpx rgba(0, 0, 0, 0.2);
+  display: none;
+  flex-direction: column;
+  z-index: 998;
+}
+
+.menu.show {
+  display: flex;
+}
+
+.menu-item {
+  padding: 20rpx;
+  text-align: center;
+  font-size: 28rpx;
+  color: #333;
+  border-bottom: 1rpx solid #eee;
+}
+
+.menu-item:last-child {
+  border-bottom: none;
+}
+
+/* 添加遮罩层样式 */
+.mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: transparent;
+  z-index: 997;
+  display: none;
+}
+
+.mask.show {
+  display: block;
+}
