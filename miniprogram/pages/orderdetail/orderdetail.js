@@ -123,11 +123,12 @@ Page({
 
   // 预览图片
   previewImage: function (e) {
-    const current = this.data.order.files.map(file => file.id)
+    const current = e.currentTarget.dataset.src;
+    const urls = this.data.order.files.map(file => file.id);
     wx.previewImage({
-      current: current[0],
-      urls: current
-    })
+      current: current, // The current image to display
+      urls: urls // The list of images to preview
+    });
   },
 
   // 切换菜单显示状态

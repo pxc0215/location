@@ -1,7 +1,19 @@
 <view class="container">
   <!-- 图片区域 -->
   <view class="image-section">
-    <image class="order-image" src="{{order.files[0].id}}" bindtap="previewImage" mode="aspectFill" />
+    <swiper class="order-swiper" indicator-dots="true" autoplay="false" interval="5000" duration="500">
+      <block wx:for="{{order.files}}" wx:key="id">
+        <swiper-item>
+          <image 
+            class="order-image" 
+            src="{{item.id}}" 
+            mode="aspectFill" 
+            bindtap="previewImage" 
+            data-src="{{item.id}}"
+          />
+        </swiper-item>
+      </block>
+    </swiper>
   </view>
 
   <!-- 地址信息，可长按复制 -->

@@ -10,9 +10,14 @@
   width: 100%;
 }
 
-.order-image {
+.order-swiper {
   width: 100%;
   height: 500rpx;
+}
+
+.order-image {
+  width: 100%;
+  height: 100%;
   object-fit: cover;
 }
 
@@ -93,7 +98,7 @@
   color: #666;
 }
 
-/* 订单详情页样式 */
+/* 订单详情页样�� */
 .floating-button {
   position: fixed;
   bottom: 120rpx;

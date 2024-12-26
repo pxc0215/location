@@ -268,14 +268,13 @@ page {
 
 .form-cell_input {
   width: 100%;
-  padding: 20rpx;
-  background: #f8f8f8;
-  border-radius: 8rpx;
-  font-size: 28rpx;
-  color: #333;
   min-height: 120rpx;
-  border: 1rpx solid #eee;
-  transition: border-color 0.3s;
+  padding: 10rpx;
+  font-size: 32rpx;
+  border: 1rpx solid #ddd;
+  border-radius: 8rpx;
+  box-sizing: border-box;
+  resize: none;
 }
 
 .form-cell_input:focus {

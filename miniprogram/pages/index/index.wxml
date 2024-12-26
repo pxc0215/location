@@ -34,6 +34,6 @@
     <view class="tips">{{address}}</view>
   </view>
   <view class="form-cell_title">备注说明(选填)</view>
-  <input class="form-cell_input" placeholder="可输入详细的描述（100字以内）" placeholder-class="form-cell_title-placeholder" maxlength="100" bindinput="onDescInput" value="{{desc}}" />
+  <textarea class="form-cell_input" placeholder="可输入详细的描述（100字以内）" placeholder-class="form-cell_title-placeholder" maxlength="100" bindinput="onDescInput" value="{{desc}}" />
   <button class="mainbtn" bindtap="submit">提交</button>
 </view>
