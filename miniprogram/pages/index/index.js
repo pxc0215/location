@@ -5,6 +5,7 @@ let db = wx.cloud.database()
 Page({
   data: {
     files: [],
+    tempFiles: [], // 新增：存储临时文件路径
     location: '-', // 纬度度
     address: '位置',
     desc: '',
@@ -82,7 +83,7 @@ Page({
       load: false // 不显示加载loading，静默执行
     }).then((res) => { // 请求成功后
       console.log(res)
-      that.setData({ // 将信息存储data数据
+      that.setData({ // 将信息储data数据
         location: res.location,
         address: res.address + '-' + res.formatted
       })
@@ -90,48 +91,36 @@ Page({
   },
 
   async makePhoto() {
-    wx.showLoading({
-      title: '加载中'
-    })
-    wx.chooseMedia({
-      count: 1,
-      mediaType: ['image'],
-      sourceType: ['album', 'camera'],
-      success: (res) => {
-        console.log(res)
-        that.setData({
-          files: [{
-            id: res.tempFiles[0].tempFilePath
-          }]
-        })
-        var dev = require('../../envList.js').dev
-        wx.cloud.uploadFile({
-          cloudPath: 'traffic_' + dev + '/' + 'accident_' + new Date().getTime() + '.png',
-          filePath: res.tempFiles[0].tempFilePath,
-          success: res => {
-            console.log('[上传文件] 成功：', res)
-            that.setData({
-              files: [{
-                id: res.fileID
-              }]
-            })
-            wx.hideLoading()
-          },
-          fail: e => {
-            console.error('[上传文件] 失败：', e)
-            wx.hideLoading()
-            wx.showToast({
-              title: '上传失败',
-              icon: 'none'
-            })
-          }
-        })
-      },
-      fail: () => {
-        // 用户取消选择时，关闭 loading
-        wx.hideLoading()
-      }
-    })
+    if (this.data.tempFiles.length >= 3) {
+      wx.showToast({
+        title: '最多上传3张照片',
+        icon: 'none'
+      })
+      return
+    }
+
+    try {
+      const res = await wx.chooseMedia({
+        count: 1,
+        mediaType: ['image'],
+        sourceType: ['album', 'camera']
+      })
+
+      // 只存储临时路径
+      this.setData({
+        tempFiles: [...this.data.tempFiles, {
+          tempFilePath: res.tempFiles[0].tempFilePath,
+          id: `temp_${Date.now()}` // 临时ID用于预览和删除
+        }]
+      })
+
+    } catch (error) {
+      console.error(error)
+      wx.showToast({
+        title: '选择照片失败',
+        icon: 'none'
+      })
+    }
   },
   // 表单输入处理函数
   onDescInput(e) {
@@ -228,7 +217,6 @@ Page({
 
   // 提交
   async submit() {
-    // 对输入内容进行校验
     if (this.data.desc.length > 100) {
       wx.showToast({
         title: '备注信息太长',
@@ -237,20 +225,42 @@ Page({
       })
       return
     }
-    var timestamp = Date.now()
-    const avatarUrl = wx.getStorageSync('avatar_url') || '/asset/default_avatar.png';
-    var env = require('../../envList.js').dev
-    
+
+    wx.showLoading({
+      title: '提交中...',
+      mask: true
+    })
+
     try {
+      const uploadedFiles = []
+      var dev = require('../../envList.js').dev
+
+      // 如果有照片，先统一上传
+      if (this.data.tempFiles.length > 0) {
+        // 并行上传所有图片
+        const uploadTasks = this.data.tempFiles.map(file => {
+          return wx.cloud.uploadFile({
+            cloudPath: `traffic_${dev}/accident_${Date.now()}_${Math.random().toString(36).slice(2)}.png`,
+            filePath: file.tempFilePath
+          })
+        })
+
+        const uploadResults = await Promise.all(uploadTasks)
+        uploadedFiles.push(...uploadResults.map(res => ({ id: res.fileID })))
+      }
+
+      var timestamp = Date.now()
+      const avatarUrl = wx.getStorageSync('avatar_url') || '/asset/default_avatar.png'
+
       // 创建订单
-      await db.collection(app.globalData.collection_order + '_' + env).add({
+      await db.collection(app.globalData.collection_order + '_' + dev).add({
         data: {
           ownerid: this.data.openId,
           ownername: this.data.userName,
           ownerAvatarUrl: avatarUrl,
-          sectionid: '11111',// 预留字段，以后用于订单可见性的权限处理
-          files: this.data.files,// 图片列表
-          location: this.data.location,// 经纬度
+          sectionid: '11111',
+          files: uploadedFiles,
+          location: this.data.location,
           address: this.data.address,
           desc: this.data.desc,
           star: false,
@@ -262,7 +272,6 @@ Page({
       await wx.cloud.callFunction({
         name: 'subscribe',
         data: {
-          collectionName: app.globalData.collection_user + '_' + env,
           address: this.data.address,
           userName: this.data.userName,
           createTime: new Date(timestamp).toLocaleString(),
@@ -270,11 +279,20 @@ Page({
         }
       })
 
+      wx.hideLoading()
       wx.showToast({
         title: '提交成功',
       })
+
+      // 清空临时文件
+      this.setData({
+        tempFiles: [],
+        desc: ''
+      })
+
     } catch (error) {
       console.error('提交失败：', error)
+      wx.hideLoading()
       wx.showToast({
         title: '提交失败',
         icon: 'error'
@@ -358,5 +376,22 @@ Page({
     this.setData({
       showMenu: false
     });
+  },
+
+  // 新增预览图片方法
+  previewImage(e) {
+    const urls = this.data.tempFiles.map(file => file.tempFilePath)
+    wx.previewImage({
+      current: e.currentTarget.dataset.url,
+      urls: urls
+    })
+  },
+
+  // 新增删除图片方法
+  deletePhoto(e) {
+    const index = e.currentTarget.dataset.index
+    const tempFiles = [...this.data.tempFiles]
+    tempFiles.splice(index, 1)
+    this.setData({ tempFiles })
   }
 })

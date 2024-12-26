@@ -20,9 +20,19 @@
       <view class="nav-btn" bindtap="toOrderList">历史记录</view>
     </view>
   </view>
-  <image class="topimg_holder" bindtap="makePhoto" wx:if="{{files.length === 0}}" src="../../asset/add_photo.png"></image>
-  <image class="topimg" bindtap="makePhoto" wx:if="{{files.length > 0}}" src="{{files[0].id}}"></image>
-  <view class="title" bindtap="makePhoto">点击添加/修改照片</view>
+  <view class="photo-container">
+    <view class="photo-list">
+      <view class="photo-item" wx:for="{{tempFiles}}" wx:key="id">
+        <image class="photo" src="{{item.tempFilePath}}" mode="aspectFill" bindtap="previewImage" data-url="{{item.tempFilePath}}"/>
+        <view class="delete-btn" catchtap="deletePhoto" data-index="{{index}}">×</view>
+      </view>
+      <view class="photo-item add-photo" bindtap="makePhoto" wx:if="{{tempFiles.length < 3}}">
+        <image class="add-icon" src="../../asset/add_photo.png"></image>
+        <view class="add-text">添加照片</view>
+      </view>
+    </view>
+    <view class="photo-tips">最多可上传3张照片</view>
+  </view>
   <view class="item" bindtap="tomap">
     <image class="location_icon" src="../../asset/location.png"></image>
     <view class="tips">{{address}}</view>

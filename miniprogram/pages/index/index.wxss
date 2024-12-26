@@ -64,14 +64,6 @@ page {
   display: block;
 }
 
-.title {
-  font-family: PingFang-SC-Medium;
-  font-size: 34rpx;
-  color: var(--lb-color);
-  text-align: center;
-  font-weight: 400;
-}
-
 .item {
   display: flex;
   flex-direction: row;
@@ -94,7 +86,9 @@ page {
 .form-cell_title {
   margin-top: 60rpx;
   margin-bottom: 20rpx;
-  font-size: 35rpx;
+  font-size: 28rpx;
+  color: #444;
+  font-weight: 400;
 }
 
 .form-cell_title-placeholder {
@@ -194,4 +188,71 @@ page {
   padding: 10rpx;
   border-radius: 8rpx;
   transition: background-color 0.2s;
+}
+
+.photo-container {
+  margin: 60rpx 0;
+}
+
+.photo-list {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 20rpx;
+}
+
+.photo-item {
+  position: relative;
+  width: calc((100% - 40rpx) / 3);
+  height: 180rpx;
+  background: #f5f5f5;
+  border-radius: 8rpx;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.delete-btn {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 40rpx;
+  height: 40rpx;
+  background: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32rpx;
+}
+
+.add-photo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 2rpx dashed #999;
+  box-sizing: border-box;
+}
+
+.add-icon {
+  width: 60rpx;
+  height: 60rpx;
+  margin-bottom: 10rpx;
+}
+
+.add-text {
+  font-size: 24rpx;
+  color: #999;
+}
+
+.photo-tips {
+  margin-top: 20rpx;
+  font-size: 24rpx;
+  color: #999;
+  text-align: center;
 }
