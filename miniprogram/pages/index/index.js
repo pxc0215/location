@@ -151,81 +151,79 @@ Page({
       mask: true // 添加遮罩层防止重复点击
     })
 
-    wx.getUserProfile({
-      desc: '用于完善会员资料',
-      success: async (res) => {
-        console.log("获取用户信息成功", res)
-        const userInfo = res.userInfo
-        that.setData({
-          userName: userInfo.nickName,
-          avatarUrl: userInfo.avatarUrl
+    try {
+      // 获取用户信息
+      const res = await wx.getUserProfile({
+        desc: '用于完善会员资料'
+      })
+      
+      console.log("获取用户信息成功", res)
+      const userInfo = res.userInfo
+      that.setData({
+        userName: userInfo.nickName,
+        avatarUrl: userInfo.avatarUrl
+      })
+      wx.setStorageSync('user_name', userInfo.nickName)
+      wx.setStorageSync('avatar_url', userInfo.avatarUrl)
+
+      // 获取用户openId
+      const openIdRes = await wx.cloud.callFunction({
+        name: 'getOpenId'
+      })
+      
+      console.log("云函数调用成功", openIdRes)
+      that.setData({
+        openId: openIdRes.result.openid
+      })
+      wx.setStorageSync('open_id', openIdRes.result.openid)
+
+      // 获取存储的用户信息
+      const db = wx.cloud.database()
+      var env = require('../../envList.js').dev
+      const userRes = await db.collection(app.globalData.collection_user + '_' + env)
+        .where({
+          _openid: openIdRes.result.openid
         })
-        wx.setStorageSync('user_name', userInfo.nickName)
-        wx.setStorageSync('avatar_url', userInfo.avatarUrl)
+        .get()
 
-        // 获取用户openId
-        wx.cloud.callFunction({
-          name: 'getOpenId',
-          success: function (res) {
-            console.log("云函数调用成功", res)
-            that.setData({
-              openId: res.result.openid
+      if (userRes.data && userRes.data.length > 0) {
+        wx.setStorageSync('user_name', userRes.data[0].nickName)
+        wx.setStorageSync('user_role', userRes.data[0].role || 'user')
+        
+        // 如果是管理员或会员，请求订阅消息授权
+        if (['admin', 'member'].includes(userRes.data[0].role)) {
+          try {
+            await wx.requestSubscribeMessage({
+              tmplIds: ['GKphq3I8BUCF_l-zApo8jj1u3nMi1HUYp5OL5bjIV74']
             })
-            wx.setStorageSync('open_id', res.result.openid)
-
-            // 获取存储的用户昵称
-            const db = wx.cloud.database()
-            var env = require('../../envList.js').dev
-            db.collection(app.globalData.collection_user + '_' + env).where({
-              _openid: res.result.openid
-            }).get({
-              success: function (res) {
-                // 隐藏加载提示
-                wx.hideLoading()
-                if (res.data && res.data.length > 0) {
-                  wx.setStorageSync('user_name', res.data[0].nickName)
-                  wx.setStorageSync('user_role', res.data[0].role || 'user')
-                } else {
-                  // 新用户默认为普通用户
-                  wx.setStorageSync('user_role', 'user')
-                }
-                that.setData({
-                  isLogin: true,
-                  userName: res.data[0].nickName
-                })
-              },
-              fail: function (err) {
-                // 隐藏加载提示
-                wx.hideLoading()
-                console.error('获取用户信息失败：', err)
-                wx.showToast({
-                  title: '登录失败',
-                  icon: 'error'
-                })
-              }
-            })
-          },
-          fail: function (err) {
-            // 隐藏加载提示
-            wx.hideLoading()
-            console.error('云函数调用失败：', err)
-            wx.showToast({
-              title: '登录失败',
-              icon: 'error'
-            })
+          } catch (err) {
+            console.error('订阅消息授权失败：', err)
+            // 这里的错误可以忽略，不影响登录流程
           }
-        })
-      },
-      fail: (err) => {
-        // 隐藏加载提示
-        wx.hideLoading()
-        console.error('获取用户信息失败：', err)
-        wx.showToast({
-          title: '登录失败',
-          icon: 'error'
-        })
+        }
+      } else {
+        wx.setStorageSync('user_role', 'user')
       }
-    })
+
+      that.setData({
+        isLogin: true,
+        userName: userRes.data[0].nickName
+      })
+
+      wx.hideLoading()
+      wx.showToast({
+        title: '登录成功',
+        icon: 'success'
+      })
+
+    } catch (err) {
+      wx.hideLoading()
+      console.error('登录失败：', err)
+      wx.showToast({
+        title: '登录失败',
+        icon: 'error'
+      })
+    }
   },
 
   // 提交
