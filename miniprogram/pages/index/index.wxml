@@ -8,16 +8,12 @@
         <view class="usertitle">{{userName || '请登录'}}</view>
       </view>
 
-      <!-- 下拉菜单 -->
+      <!-- 修改下拉菜单，添加历史记录选项 -->
       <view class="dropdown-menu" wx:if="{{showMenu && userName && userName !== '登录'}}">
         <view class="menu-item" catchtap="toUserInfo">个人中心</view>
+        <view class="menu-item" catchtap="toOrderList">订单列表</view>
         <view class="menu-item" catchtap="handleLogout">退出登录</view>
       </view>
-    </view>
-
-    <!-- 右侧只保留历史记录按钮 -->
-    <view class="right-buttons" wx:if="{{userName && userName !== '登录'}}">
-      <view class="nav-btn" bindtap="toOrderList">历史记录</view>
     </view>
   </view>
   <view class="photo-container">
@@ -33,7 +29,7 @@
     </view>
     <view class="photo-tips">最多可上传3张照片</view>
   </view>
-  <view class="item" bindtap="tomap">
+  <view class="item location-item" bindtap="tomap">
     <image class="location_icon" src="../../asset/location.png"></image>
     <view class="tips">{{address}}</view>
   </view>
