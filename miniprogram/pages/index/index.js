@@ -242,32 +242,50 @@ Page({
     var timestamp = Date.now()
     const avatarUrl = wx.getStorageSync('avatar_url') || '/asset/default_avatar.png';
     var env = require('../../envList.js').dev
-    // 在数据库中新建一条记录
-    db.collection(app.globalData.collection_order + '_' + env).add({
-      data: {
-        ownerid: this.data.openId,
-        ownername: this.data.userName,
-        ownerAvatarUrl: avatarUrl,
-        sectionid: '11111', // 预留字段，以后用于订单可见性的权限处理
-        files: this.data.files, // 图片列表
-        location: this.data.location, // 经纬度
-        address: this.data.address, // 地址文案
-        desc: this.data.desc, // 描述
-        star: false,
-        time: timestamp
-      }
-    }).then(res => {
+    
+    try {
+      // 创建订单
+      await db.collection(app.globalData.collection_order + '_' + env).add({
+        data: {
+          ownerid: this.data.openId,
+          ownername: this.data.userName,
+          ownerAvatarUrl: avatarUrl,
+          sectionid: '11111',// 预留字段，以后用于订单可见性的权限处理
+          files: this.data.files,// 图片列表
+          location: this.data.location,// 经纬度
+          address: this.data.address,
+          desc: this.data.desc,
+          star: false,
+          time: timestamp
+        }
+      })
+
+      // 调用订阅消息云函数
+      await wx.cloud.callFunction({
+        name: 'subscribe',
+        data: {
+          collectionName: app.globalData.collection_user + '_' + env,
+          address: this.data.address,
+          userName: this.data.userName,
+          createTime: new Date(timestamp).toLocaleString(),
+          remark: this.data.desc || '无备注'
+        }
+      })
+
       wx.showToast({
         title: '提交成功',
       })
-      // wx.navigateBack({
-      //   delta: 0,
-      // })
-    })
+    } catch (error) {
+      console.error('提交失败：', error)
+      wx.showToast({
+        title: '提交失败',
+        icon: 'error'
+      })
+    }
   },
   onShareAppMessage() {
     return {
-      title: '快来��手拍交通事故',
+      title: '快来随手拍交通事故',
       imageUrl: '../../asset/logo.png'
     }
   },
@@ -278,7 +296,7 @@ Page({
     })
   },
 
-  // 处理退出登��
+  // 处理退出登录
   handleLogout() {
     this.setData({
       showMenu: false

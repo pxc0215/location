@@ -20,11 +20,11 @@ exports.main = async (event, context) => {
       })
       .get()
     
-    const isAdmin = users.length > 0 && users[0].role === 'admin'
+    const highLevel = users.length > 0 && (users[0].role === 'admin' || users[0].role === 'member')
     
     // 构建查询条件
     let query = {}
-    if (!isAdmin) {
+    if (!highLevel) {
       query = _.or([
         { _openid: wxContext.OPENID },
         { ownerid: wxContext.OPENID }

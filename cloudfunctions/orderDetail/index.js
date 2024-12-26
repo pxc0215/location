@@ -7,14 +7,13 @@ cloud.init({
 
 // 云函数入口函数
 exports.main = async (event, context) => {
-  console.log('收到的数据' + event.handle + '---' + event.flowRecord)
   if (event.handle === 'get') {
     return await getOrder(event)
   } else if (event.handle === 'update') {
     return await updateOrder(event)
   }
 }
-
+// 获取订单
 async function getOrder(event) {
   try {
     const {
@@ -40,6 +39,7 @@ async function getOrder(event) {
   }
 }
 
+// 更新订单
 async function updateOrder(event) {
   try {
     const {
@@ -63,7 +63,6 @@ async function updateOrder(event) {
         } : {})
       }
     })
-    console.log('更新完成')
 
     return {
       success: true,
