@@ -133,7 +133,7 @@ Page({
       url: '../map/map'
     })
   },
-  async getUserProfile() {
+  async getUserWXProfile() {
     // 显示加载中
     wx.showLoading({
       title: '微信账户登录中...',
@@ -145,26 +145,22 @@ Page({
       const res = await wx.getUserProfile({
         desc: '用于完善会员资料'
       })
-      
-      console.log("获取用户信息成功", res)
       const userInfo = res.userInfo
-      that.setData({
-        userName: userInfo.nickName,
-        avatarUrl: userInfo.avatarUrl
-      })
-      wx.setStorageSync('user_name', userInfo.nickName)
-      wx.setStorageSync('avatar_url', userInfo.avatarUrl)
-
       // 获取用户openId
       const openIdRes = await wx.cloud.callFunction({
         name: 'getOpenId'
       })
-      
-      console.log("云函数调用成功", openIdRes)
-      that.setData({
-        openId: openIdRes.result.openid
+
+      this.setData({
+        isLogin: true,
+        openId: openIdRes.result.openid,
+        userName: userInfo.nickName,
+        avatarUrl: userInfo.avatarUrl
       })
       wx.setStorageSync('open_id', openIdRes.result.openid)
+      wx.setStorageSync('user_name', userInfo.nickName || '微信用户')
+      wx.setStorageSync('avatar_url', userInfo.avatarUrl)
+      wx.setStorageSync('user_role', 'user')
 
       // 获取存储的用户信息
       const db = wx.cloud.database()
@@ -175,10 +171,13 @@ Page({
         })
         .get()
 
+      // 如果数据库中有该用户，则说明不是新用户，否则需要将用户信息保存到数据库
       if (userRes.data && userRes.data.length > 0) {
+        this.setData({
+          userName: userRes.data[0].nickName
+        })
         wx.setStorageSync('user_name', userRes.data[0].nickName)
         wx.setStorageSync('user_role', userRes.data[0].role || 'user')
-        
         // 如果是管理员或会员，请求订阅消息授权
         if (['admin', 'member'].includes(userRes.data[0].role)) {
           try {
@@ -191,14 +190,9 @@ Page({
           }
         }
       } else {
-        wx.setStorageSync('user_role', 'user')
+        const userName = userInfo.nickName || '微信用户'
+        this.saveNewUser(openIdRes.result.openid, userName, userInfo.avatarUrl)
       }
-
-      that.setData({
-        isLogin: true,
-        userName: userRes.data[0].nickName
-      })
-
       wx.hideLoading()
       wx.showToast({
         title: '登录成功',
@@ -213,6 +207,20 @@ Page({
         icon: 'error'
       })
     }
+  },
+
+  // 新用户，则保存到数据库
+  async saveNewUser(openId, userName, avatarUrl) {
+    const db = wx.cloud.database()
+    var env = require('../../envList.js').dev
+    const userCollection = db.collection(app.globalData.collection_user + '_' + env)
+    userCollection.add({
+      data: {
+        nickName: userName,
+        avatarUrl: avatarUrl,
+        role: 'user'
+      }
+    })
   },
 
   // 提交
@@ -307,6 +315,9 @@ Page({
   },
   // 跳转到历史记录页面
   toOrderList() {
+    this.setData({
+      showMenu: false
+    });
     wx.navigateTo({
       url: '../orderlist/orderlist'
     })
@@ -344,7 +355,7 @@ Page({
   showUserMenu() {
     if (!this.data.userName || this.data.userName === '登录') {
       // 未登录时，触发登录
-      this.getUserProfile();
+      this.getUserWXProfile();
       return;
     }
     this.setData({
