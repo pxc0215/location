@@ -15,12 +15,11 @@ Page({
   },
 
   onLoad() {
-    // 获取存储的用户信息
-    const nickName = wx.getStorageSync('user_name')
-    const avatarUrl = wx.getStorageSync('avatar_url')
-    const company = wx.getStorageSync('company')
-    const phoneNumber = wx.getStorageSync('phone_number')
-    const openId = wx.getStorageSync('open_id')
+    // Attempt to load user data from local storage
+    const nickName = wx.getStorageSync('user_name') || ''
+    const avatarUrl = wx.getStorageSync('avatar_url') || ''
+    const company = wx.getStorageSync('company') || ''
+    const phoneNumber = wx.getStorageSync('phone_number') || ''
 
     this.setData({
       userInfo: {
@@ -28,14 +27,63 @@ Page({
         avatarUrl,
         company,
         phoneNumber
-      },
-      openId
+      }
     })
+
+    // Check if any data is missing，then fetch from cloud database
+    if (!nickName || !avatarUrl || !company || !phoneNumber) {
+      console.log('需要从云数据库中获取数据')
+      const openId = wx.getStorageSync('open_id')
+      if (openId) {
+        // Fetch user data from the cloud database
+        const userCollection = db.collection(app.globalData.collection_user + '_' + require('../../envList.js').dev)
+        userCollection.where({
+          _openid: openId
+        }).get().then(res => {
+          if (res.data.length > 0) {
+            const userData = res.data[0]
+            this.setData({
+              userInfo: {
+                nickName: userData.nickName || '',
+                avatarUrl: userData.avatarUrl || '',
+                company: userData.company || '',
+                phoneNumber: userData.phoneNumber || ''
+              },
+              openId
+            })
+            // Update local storage with fetched data
+            wx.setStorageSync('user_name', userData.nickName)
+            wx.setStorageSync('avatar_url', userData.avatarUrl)
+            wx.setStorageSync('company', userData.company)
+            wx.setStorageSync('phone_number', userData.phoneNumber)
+          }
+        }).catch(error => {
+          console.error('Failed to fetch user data:', error)
+        })
+      }
+    }
 
     // 检查是否为管理员
     const userRole = wx.getStorageSync('user_role')
     this.setData({
       isAdmin: userRole === 'admin'
+    })
+  },
+
+  loadLocalData() {
+    // Load user data from local storage
+    const nickName = wx.getStorageSync('user_name') || ''
+    const avatarUrl = wx.getStorageSync('avatar_url') || ''
+    const company = wx.getStorageSync('company') || ''
+    const phoneNumber = wx.getStorageSync('phone_number') || ''
+
+    this.setData({
+      userInfo: {
+        nickName,
+        avatarUrl,
+        company,
+        phoneNumber
+      }
     })
   },
 
