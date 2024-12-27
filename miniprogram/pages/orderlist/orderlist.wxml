@@ -8,6 +8,7 @@
         <view class="bottom-info">
           <text class="user-name">{{item.ownername}}</text>
           <text class="order-time">{{item.createTime}}</text>
+          <text class="status-tag">{{item.statusText}}</text>
         </view>
       </view>
     </view>

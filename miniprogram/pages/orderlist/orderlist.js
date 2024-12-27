@@ -32,7 +32,23 @@ Page({
         if (res.result.success) {
           res.result.data.forEach(order => {
             order.createTime = formatTime(order.time) // 格式化时间
+            console.log(order.flowRecords)
+
+            // Determine the status text based on flowRecords
+            if (!order.flowRecords || order.flowRecords.length === 0) {
+              order.statusText = '新创建'
+            } else {
+              const lastFlowRecord = order.flowRecords[order.flowRecords.length - 1]
+              if (lastFlowRecord.status === 'processing') {
+                order.statusText = '处理中'
+              } else if (lastFlowRecord.status === 'completed') {
+                order.statusText = '已完成'
+              } else {
+                order.statusText = '未知状态' // Fallback for unknown statuses
+              }
+            }
           })
+
           this.setData({
             orders: res.result.data
           })

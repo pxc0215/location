@@ -21,7 +21,7 @@ page {
 
 .order-header {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   padding: 24rpx 24rpx 24rpx 12rpx;
 }
 
@@ -39,16 +39,24 @@ page {
   min-width: 0;
 }
 
+.address-status {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12rpx;
+}
+
 .address-text {
   font-size: 32rpx;
   color: #333333;
   line-height: 1.4;
-  margin-bottom: 12rpx;
   font-weight: 500;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
+  display: block;
   overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
+  flex: 1;
+  margin-right: 12rpx;
 }
 
 .bottom-info {
@@ -64,11 +72,14 @@ page {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  flex: 1;
 }
 
 .order-time {
   font-size: 26rpx;
   color: #999999;
+  margin-right: 8rpx;
+  white-space: nowrap;
 }
 
 .order-detail {
@@ -177,4 +188,23 @@ page {
 .status-item.archive .status-type,
 .status-item.archive .status-icon {
   background: #909399;
+}
+
+.status-tag {
+  font-size: 24rpx;
+  color: #999999;
+  font-weight: normal;
+  white-space: nowrap;
+}
+
+.status-tag.new {
+  background-color: #4A90E2;
+}
+
+.status-tag.processing {
+  background-color: #F5A623;
+}
+
+.status-tag.completed {
+  background-color: #67C23A;
 }
