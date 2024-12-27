@@ -61,7 +61,9 @@
 
 .timeline-header {
   display: flex;
+  justify-content: space-between;
   align-items: center;
+  margin-bottom: 8px;
 }
 
 .timeline-tag {
@@ -74,16 +76,15 @@
 }
 
 .timeline-user {
-  font-size: 26rpx;
-  color: #333;
-  display: inline-flex;
-  align-items: center;
+  font-size: 14px;
+  color: #007aff;
+  cursor: pointer;
   margin-right: auto;
 }
 
 .timeline-time {
-  font-size: 24rpx;
-  color: #999;
+  font-size: 14px;
+  color: #666;
 }
 
 /* 备注信息的样式 */
@@ -98,7 +99,7 @@
   color: #666;
 }
 
-/* 订单详情页样�� */
+/* 订单详情页样式 */
 .floating-button {
   position: fixed;
   bottom: 120rpx;

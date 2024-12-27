@@ -32,14 +32,8 @@
               {{item.type === 'create' ? '创建' : 
                 (item.status === 'completed' ? '完成' : '处理')}}
             </view>
-            <view class="timeline-user">
-              {{item.userName}}
-              <image 
-                class="phone-icon" 
-                src="/asset/phone.svg" 
-                bindtap="makePhoneCall" 
-                data-userid="{{item.userId}}"
-              />
+            <view class="timeline-user" bindtap="navigateToUserDetail" data-userid="{{item.userId}}">
+              <text class="user-name">{{item.userName}}</text>
             </view>
             <view class="timeline-time">{{item.time}}</view>
           </view>

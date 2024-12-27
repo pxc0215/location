@@ -1,0 +1,49 @@
+.container {
+  padding: 20px;
+  background-color: #ffffff;
+  min-height: 100vh;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+}
+
+.nick-name {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.company {
+  font-size: 16px;
+  color: #666;
+}
+
+.contact-section {
+  padding: 10px;
+  border-top: 1px solid #eee;
+}
+
+.phone-label {
+  font-size: 16px;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.phone-number {
+  font-size: 16px;
+  color: #007aff;
+  cursor: pointer;
+}

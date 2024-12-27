@@ -4,6 +4,7 @@
     "pages/orderlist/orderlist",
     "pages/orderdetail/orderdetail",
     "pages/userInfo/userInfo",
+    "pages/userDetail/userDetail",
     "pages/map/map"
   ],
   "permission": {

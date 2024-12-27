@@ -214,7 +214,6 @@ Page({
         flowRecord
       },
       success: res => {
-        console.log(res)
         wx.hideLoading();
         // 更新成功后刷新页面数据
         this.getOrderDetail(orderId);
@@ -297,5 +296,19 @@ Page({
         console.error('获取用户手机号失败：', err);
       }
     });
+  },
+
+  navigateToUserDetail(e) {
+    const userId = e.currentTarget.dataset.userid;
+    if (userId) {
+      wx.navigateTo({
+        url: `/pages/userDetail/userDetail?userId=${userId}`
+      });
+    } else {
+      wx.showToast({
+        title: '无法获取用户信息',
+        icon: 'none'
+      });
+    }
   }
 })
