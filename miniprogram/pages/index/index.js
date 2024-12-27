@@ -280,6 +280,7 @@ Page({
       await wx.cloud.callFunction({
         name: 'subscribe',
         data: {
+          collectionName: app.globalData.collection_user + '_' + dev,
           address: this.data.address,
           userName: this.data.userName,
           createTime: new Date(timestamp).toLocaleString(),
