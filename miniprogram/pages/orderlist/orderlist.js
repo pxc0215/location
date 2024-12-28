@@ -13,6 +13,11 @@ Page({
     this.getOrderList()
   },
 
+  onPullDownRefresh() {
+    // Refresh the order list
+    this.getOrderList()
+  },
+
   getOrderList: function () {
     wx.showLoading({
       title: '加载中...'
@@ -58,10 +63,12 @@ Page({
           })
         }
         wx.hideLoading()
+        wx.stopPullDownRefresh() // Stop the pull-down refresh action
       },
       fail: err => {
         console.error('获取订单列表失败：', err)
         wx.hideLoading()
+        wx.stopPullDownRefresh() // Stop the pull-down refresh action
         wx.showToast({
           title: '加载失败'
         })
