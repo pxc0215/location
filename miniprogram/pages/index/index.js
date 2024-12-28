@@ -13,7 +13,8 @@ Page({
     userName: '',
     avatarUrl: '../../asset/user_center.png',
     showMenu: false,
-    isLogin: false
+    isLogin: false,
+    showSubscribeModal: false, // 控制订阅弹窗的显示
   },
   /**
    * 页面装载回调
@@ -178,27 +179,21 @@ Page({
         })
         wx.setStorageSync('user_name', userRes.data[0].nickName)
         wx.setStorageSync('user_role', userRes.data[0].role || 'user')
+        wx.hideLoading()
+        wx.showToast({
+          title: '登录成功',
+          icon: 'success'
+        })
         // 如果是管理员或会员，请求订阅消息授权
         if (['admin', 'member'].includes(userRes.data[0].role)) {
-          try {
-            await wx.requestSubscribeMessage({
-              tmplIds: ['GKphq3I8BUCF_l-zApo8jj1u3nMi1HUYp5OL5bjIV74']
-            })
-          } catch (err) {
-            console.error('订阅消息授权失败：', err)
-            // 这里的错误可以忽略，不影响登录流程
-          }
+          this.setData({
+            showSubscribeModal: true
+          });
         }
       } else {
         const userName = userInfo.nickName || '微信用户'
         this.saveNewUser(openIdRes.result.openid, userName, userInfo.avatarUrl)
       }
-      wx.hideLoading()
-      wx.showToast({
-        title: '登录成功',
-        icon: 'success'
-      })
-
     } catch (err) {
       wx.hideLoading()
       console.error('登录失败：', err)
@@ -283,7 +278,7 @@ Page({
           collectionName: app.globalData.collection_user + '_' + dev,
           address: this.data.address,
           userName: this.data.userName,
-          createTime: new Date(timestamp).toLocaleString(),
+          createTime: formatTime(),
           remark: this.data.desc || '无备注'
         }
       })
@@ -405,5 +400,51 @@ Page({
     const tempFiles = [...this.data.tempFiles]
     tempFiles.splice(index, 1)
     this.setData({ tempFiles })
-  }
+  },
+
+  onCancelSubscribe() {
+    this.setData({
+      showSubscribeModal: false
+    });
+  },
+
+  onConfirmSubscribe() {
+    this.setData({
+      showSubscribeModal: false
+    });
+
+    wx.requestSubscribeMessage({
+      tmplIds: ['GKphq3I8BUCF_l-zApo8jj1u3nMi1HUYp5OL5bjIV74'],
+      success(res) {
+        if (res['GKphq3I8BUCF_l-zApo8jj1u3nMi1HUYp5OL5bjIV74'] === 'accept') {
+          wx.showToast({
+            title: '订阅成功',
+            icon: 'success'
+          });
+        } else {
+          wx.showToast({
+            title: '订阅失败',
+            icon: 'none'
+          });
+        }
+      },
+      fail(err) {
+        console.error('订阅请求失败:', err);
+        wx.showToast({
+          title: '订阅请求失败',
+          icon: 'none'
+        });
+      }
+    });
+  },
 })
+
+function formatTime() {
+  const date = new Date()
+  const year = date.getFullYear()
+  const month = date.getMonth() + 1
+  const day = date.getDate()
+  const hour = date.getHours()
+  const minute = date.getMinutes()
+  return `${year}-${month}-${day} ${hour}:${minute < 10 ? '0' + minute : minute}`
+}
