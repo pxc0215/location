@@ -235,13 +235,13 @@ Page({
   },
 
   // 修改菜单项点击事件
-  onMenuItemClick(e) {
-    const action = e.currentTarget.dataset.action;
-    if (action === 'process') {
-      this.handleProcess();
-    }
-    // ... 其他菜单项处理
-  },
+  // onMenuItemClick(e) {
+  //   const action = e.currentTarget.dataset.action;
+  //   if (action === 'process') {
+  //     this.handleProcess();
+  //   }
+  //   // ... 其他菜单项处理
+  // },
 
   // 处理拨打电话
   makePhoneCall(e) {

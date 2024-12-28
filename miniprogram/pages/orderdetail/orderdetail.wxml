@@ -50,12 +50,15 @@
   </view>
 
   <!-- 悬浮按钮和菜单 -->
-  <view class="floating-button" bindtap="toggleMenu">
+  <!-- <view class="floating-button" bindtap="toggleMenu">
     <image class="edit-icon" src="/asset/edit.svg"></image>
   </view>
   <view class="menu {{showMenu ? 'show' : ''}}">
     <view class="menu-item" bindtap="onMenuItemClick" data-action="process">处理</view>
     <view class="menu-item">流转</view>
+  </view> -->
+  <view class="floating-button" bindtap="handleProcess">
+    <image class="edit-icon" src="/asset/edit.svg"></image>
   </view>
 </view>
 
